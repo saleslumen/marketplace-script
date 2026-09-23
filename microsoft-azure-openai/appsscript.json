@@ -1,0 +1,48 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [
+        "INSTALLATION"
+      ],
+      "externalDomains": []
+    },
+    "connections": [
+      {
+        "key": "azure",
+        "authorizationMode": "USER",
+        "required": true,
+        "oauthScopes": [
+          "https://cognitiveservices.azure.com/.default",
+          "offline_access"
+        ]
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "endpoint",
+          "type": "outbound_origin",
+          "required": true
+        },
+        {
+          "key": "deployment",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "apiVersion",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  }
+}
