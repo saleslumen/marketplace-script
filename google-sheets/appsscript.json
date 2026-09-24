@@ -1,0 +1,33 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [
+        "INSTALLATION"
+      ],
+      "externalDomains": [
+        "https://sheets.googleapis.com"
+      ]
+    },
+    "connections": [
+      {
+        "kind": "OAUTH",
+        "key": "google_sheets",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Google Sheets",
+        "helpText": "Connect the Google account this app uses to read and write spreadsheets.",
+        "oauthScopes": [
+          "https://www.googleapis.com/auth/spreadsheets"
+        ]
+      }
+    ]
+  }
+}
