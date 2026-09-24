@@ -1,0 +1,37 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": [
+      { "serviceId": "campaigns", "version": "v1", "userSymbol": "Campaigns" }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [
+        "campaigns.campaigns.execute",
+        "campaigns.campaigns.read",
+        "campaigns.campaigns.write",
+        "campaigns.campaignschedules.read",
+        "campaigns.campaignschedules.write",
+        "campaigns.deliveries.execute",
+        "campaigns.deliveries.read",
+        "campaigns.metrics.read",
+        "campaigns.operations.read",
+        "campaigns.people.execute",
+        "campaigns.people.read",
+        "campaigns.people.write",
+        "campaigns.sequences.execute",
+        "campaigns.sequences.read",
+        "campaigns.sequences.write",
+        "campaigns.suppressions.read",
+        "campaigns.suppressions.write",
+        "campaigns.tasks.read"
+      ],
+      "storage": [],
+      "externalDomains": []
+    }
+  }
+}

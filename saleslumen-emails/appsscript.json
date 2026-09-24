@@ -1,0 +1,39 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": [
+      { "serviceId": "emails", "version": "v1", "userSymbol": "Emails" }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [
+        "emails.accounts.execute",
+        "emails.accounts.read",
+        "emails.accounts.write",
+        "emails.attachments.read",
+        "emails.connections.read",
+        "emails.connections.write",
+        "emails.drafts.execute",
+        "emails.drafts.read",
+        "emails.drafts.write",
+        "emails.labels.read",
+        "emails.labels.write",
+        "emails.messages.execute",
+        "emails.messages.read",
+        "emails.messages.write",
+        "emails.refresh.write",
+        "emails.threads.execute",
+        "emails.threads.read",
+        "emails.threads.write",
+        "emails.tools.execute",
+        "emails.tools.read"
+      ],
+      "storage": [],
+      "externalDomains": []
+    }
+  }
+}
