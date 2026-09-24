@@ -16,9 +16,12 @@
     },
     "connections": [
       {
+        "kind": "OAUTH",
         "key": "azure",
         "authorizationMode": "USER",
         "required": true,
+        "displayLabel": "Azure OpenAI",
+        "helpText": "Connect the Microsoft user this app uses for Azure OpenAI. The installation supplies the resource endpoint.",
         "oauthScopes": [
           "https://cognitiveservices.azure.com/.default",
           "offline_access"
