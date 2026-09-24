@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://proxy.webshare.io"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "webshare",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Webshare",
+        "helpText": "Paste the Webshare API key. The app sends it as an Authorization Token header."
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.ai-ark.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "aiark",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "AI Ark",
+        "helpText": "Paste the AI Ark API key from the API Management Dashboard. The app sends it as the X-TOKEN header."
+      }
+    ]
+  }
+}

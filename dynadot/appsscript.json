@@ -1,0 +1,43 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.dynadot.com", "https://api-sandbox.dynadot.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "dynadot",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Dynadot API key",
+        "helpText": "Paste the Dynadot API key from Tools, API. REST calls send it as a bearer token. API3 calls send it as the key query parameter."
+      },
+      {
+        "kind": "API_KEY",
+        "key": "dynadotSecret",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Dynadot API secret",
+        "helpText": "Paste the Dynadot API secret from Tools, API. REST calls use it to sign each request."
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "apiBase",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  }
+}

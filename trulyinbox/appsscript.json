@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://lupus-edge.trulyinbox.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "trulyinbox",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "TrulyInbox",
+        "helpText": "Paste the TrulyInbox API key from Settings, API. The app sends it as the X-Api-Key header."
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://openrouter.ai"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "openrouter",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "OpenRouter",
+        "helpText": "Paste the OpenRouter API key. The app sends it as a bearer token."
+      }
+    ]
+  }
+}

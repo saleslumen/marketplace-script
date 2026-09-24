@@ -1,0 +1,35 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.linear.app"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "linear",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Linear",
+        "helpText": "Paste the Linear personal API key from Settings, API. The app sends it as the Authorization header."
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "teamId",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  }
+}

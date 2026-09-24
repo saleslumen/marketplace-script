@@ -1,0 +1,35 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": ["INSTALLATION"],
+      "externalDomains": ["https://api.hubapi.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "hubspot",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "HubSpot",
+        "helpText": "Paste the HubSpot private app access token from Settings, Integrations, Private Apps. The app sends it to HubSpot as a bearer token."
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "apiVersion",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  }
+}

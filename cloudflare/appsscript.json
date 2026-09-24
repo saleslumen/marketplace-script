@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.cloudflare.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "cloudflare",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Cloudflare",
+        "helpText": "Paste the Cloudflare API token for this account. The app sends it to Cloudflare as a bearer token. Pass the account id on each operation."
+      }
+    ]
+  }
+}

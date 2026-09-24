@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.groq.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "groq",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Groq",
+        "helpText": "Paste the Groq API key from the Groq console. The app sends it as a bearer token."
+      }
+    ]
+  }
+}

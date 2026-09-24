@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://app.emailguard.io"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "emailguard",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "EmailGuard",
+        "helpText": "Paste the EmailGuard API token from Generate API token. The app sends it as a bearer token."
+      }
+    ]
+  }
+}

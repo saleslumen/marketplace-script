@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": ["USER"],
+      "externalDomains": ["https://api.airtable.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "airtable",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Airtable",
+        "helpText": "Paste the Airtable personal access token. The app sends it to Airtable as a bearer token."
+      }
+    ]
+  }
+}

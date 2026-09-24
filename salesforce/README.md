@@ -4,14 +4,16 @@ Salesforce REST operations for a Saleslumen Marketplace app. Each operation is o
 
 ## Connection
 
-The connection key is `salesforce`. Authorization mode is `USER`, and the connection is required.
+The connection kind is `OAUTH`. The connection key is `salesforce`. The display label is `Salesforce`. Authorization mode is `USER`, and the connection is required.
 
-OAuth scopes:
+Connect the Salesforce user this app calls. The installation supplies the instance origin.
+
+Scopes:
 
 - `full`
 - `refresh_token`
 
-Register an OAuth client that can issue those scopes. Copy the redirect URI from Saleslumen Marketplace onto that client before you submit the app. Each installation supplies its own instance origin.
+Register the OAuth client, then copy the redirect URI from Saleslumen Marketplace onto that client.
 
 ## Configuration
 

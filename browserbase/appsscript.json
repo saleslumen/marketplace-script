@@ -1,0 +1,35 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": ["INSTALLATION"],
+      "externalDomains": ["https://api.browserbase.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "browserbase",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Browserbase",
+        "helpText": "Paste the Browserbase API key. The app sends it as the X-BB-API-Key header."
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "projectId",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  }
+}

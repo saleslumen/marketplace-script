@@ -13,10 +13,12 @@ One directory is one project. The project `README.md` lists operations, configur
 | `permissions.saleslumenScopes` | Saleslumen scopes. Use `[]` for none. |
 | `permissions.storage` | `INSTALLATION`, `USER`, or both. |
 | `permissions.externalDomains` | `https` origins. Use `[]` when the installation supplies the origin. |
-| `connections` | OAuth connections. |
+| `connections` | OAuth or API key connections. |
 | `configuration.fields` | Values supplied at installation. |
 
-A connection has `key`, `authorizationMode` (`USER` or `INSTALLATION`), `required`, and `oauthScopes`.
+An OAuth connection has `kind` `OAUTH`, `key`, `authorizationMode` (`USER` or `INSTALLATION`), `required`, `displayLabel`, `helpText`, and `oauthScopes`.
+
+An API key connection has `kind` `API_KEY`, `key`, `authorizationMode` (`USER` or `INSTALLATION`), `required`, `displayLabel`, and `helpText`. It does not include `oauthScopes`. Installed code reads the key with `ConnectionApp.getApiKey(connectionKey)`.
 
 A configuration field has `key`, `type`, and `required`. The types are `string`, `number`, `boolean`, `secret`, and `outbound_origin`.
 
@@ -41,4 +43,4 @@ sl script content update --project SCRIPT_ID --input content.json
 
 `sl script projects create` prints `scriptId`. `sl script content update` lists the uploaded files.
 
-Create a version in the Saleslumen console, create the Saleslumen Marketplace app, register the OAuth client with the redirect URI, and submit the app.
+Create a version in the Saleslumen console, create the Saleslumen Marketplace app, register an OAuth client when the connection kind is OAuth, and submit the app.

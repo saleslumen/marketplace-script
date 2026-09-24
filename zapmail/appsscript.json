@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.zapmail.ai"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "zapmail",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Zapmail",
+        "helpText": "Paste the Zapmail API key from Dashboard, Settings, Integrations, API. The app sends it as the x-auth-zapmail header."
+      }
+    ]
+  }
+}

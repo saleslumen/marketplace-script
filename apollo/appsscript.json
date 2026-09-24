@@ -1,0 +1,26 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.apollo.io"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "apollo",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Apollo",
+        "helpText": "Paste the Apollo API key from Settings, Integrations, API. The app sends it as the X-Api-Key header."
+      }
+    ]
+  }
+}

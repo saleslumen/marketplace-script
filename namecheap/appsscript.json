@@ -1,0 +1,50 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": [],
+      "externalDomains": ["https://api.namecheap.com", "https://api.sandbox.namecheap.com"]
+    },
+    "connections": [
+      {
+        "kind": "API_KEY",
+        "key": "namecheap",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Namecheap API key",
+        "helpText": "Paste the Namecheap API key from Profile, Tools, API Access. The app sends it as the ApiKey query parameter. Whitelist the client IP in Namecheap before calling."
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "apiBase",
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "apiUser",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "clientIp",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "userName",
+          "type": "string",
+          "required": true
+        }
+      ]
+    }
+  }
+}
