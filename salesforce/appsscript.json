@@ -1,0 +1,41 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": []
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [],
+      "storage": ["INSTALLATION"],
+      "externalDomains": []
+    },
+    "connections": [
+      {
+        "kind": "OAUTH",
+        "key": "salesforce",
+        "authorizationMode": "USER",
+        "required": true,
+        "displayLabel": "Salesforce",
+        "helpText": "Connect the Salesforce user this app calls. The installation supplies the instance origin.",
+        "oauthScopes": ["full", "refresh_token"]
+      }
+    ],
+    "configuration": {
+      "fields": [
+        {
+          "key": "instanceUrl",
+          "type": "outbound_origin",
+          "required": true
+        },
+        {
+          "key": "apiVersion",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  }
+}
