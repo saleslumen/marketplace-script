@@ -1,0 +1,31 @@
+{
+  "runtime": "nodejs22",
+  "timeZone": "UTC",
+  "dependencies": {
+    "libraries": [],
+    "enabledServices": [
+      { "serviceId": "workflows", "version": "v1", "userSymbol": "Workflows" }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "marketplace": {
+    "permissions": {
+      "saleslumenScopes": [
+        "workflows.executions.execute",
+        "workflows.executions.read",
+        "workflows.history.read",
+        "workflows.triggereventtypes.read",
+        "workflows.triggers.execute",
+        "workflows.triggers.read",
+        "workflows.triggers.write",
+        "workflows.versions.execute",
+        "workflows.versions.read",
+        "workflows.workflows.execute",
+        "workflows.workflows.read",
+        "workflows.workflows.write"
+      ],
+      "storage": [],
+      "externalDomains": []
+    }
+  }
+}
