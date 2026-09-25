@@ -16,7 +16,8 @@ This app has no installation settings.
 
 | Operation | What it does |
 | --- | --- |
-| `chatCompletions` | Create a chat completion. |
+| `chatCompletions` | Create a chat completion. Set `json: true` to require and return one parsed JSON object. |
+| `decisions` | Ask Jev typed choice, noul, or score questions. Defaults to `typesafe/jev-1.13`. |
 | `listModels` | List models available to the API key. |
 
 The JSDoc on each function is the parameter and error contract.

@@ -1,4 +1,5 @@
 const OPENROUTER_API_BASE = "https://openrouter.ai/api/v1";
+const OPENROUTER_DECISIONS_URL = "https://openrouter.ai/api/alpha/decisions";
 const CONNECTION_KEY = "openrouter";
 const asString = (value) => (value === undefined || value === null ? "" : String(value).trim());
 const asNumber = (value, fallback) => {
@@ -22,7 +23,7 @@ const assistantContent = (message) => {
   return asString(value);
 };
 const getOpenRouterApiKey = async () => ConnectionApp.getApiKey(CONNECTION_KEY);
-const openrouterRequest = async (path, method, body) => {
+const openrouterRequestUrl = async (url, method, body) => {
   const apiKey = await getOpenRouterApiKey();
   const options = {
     method,
@@ -33,7 +34,7 @@ const openrouterRequest = async (path, method, body) => {
     },
   };
   if (body !== undefined) options.payload = JSON.stringify(body);
-  const response = await UrlFetchApp.fetch(`${OPENROUTER_API_BASE}${path}`, options);
+  const response = await UrlFetchApp.fetch(url, options);
   const status = response.getResponseCode();
   const text = response.getContentText();
   if (status < 200 || status >= 300) throw new Error(`OPENROUTER_REQUEST_FAILED (${status}): ${text}`);
@@ -43,3 +44,5 @@ const openrouterRequest = async (path, method, body) => {
   }
   return parsed;
 };
+const openrouterRequest = async (path, method, body) => openrouterRequestUrl(`${OPENROUTER_API_BASE}${path}`, method, body);
+const openrouterDecisionsRequest = async (body) => openrouterRequestUrl(OPENROUTER_DECISIONS_URL, "POST", body);

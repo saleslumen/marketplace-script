@@ -4,8 +4,10 @@
  * @param {Object[]} input.messages - Chat messages [{ role, content }, ...]
  * @param {string} [input.model] - Model id. Default qwen/qwen3-32b.
  * @param {number|string} [input.temperature] - Sampling temperature. Default 0.4.
+ * @param {boolean} [input.json] - Require and parse one JSON object.
  * @returns {Object}
  * @property {string} content - Assistant message content
+ * @property {Object} json - Parsed object when input.json is true
  * @property {string} model - Model reported by OpenRouter
  * @property {Object} raw - Full API response
  */
@@ -28,8 +30,20 @@ async function chatCompletions(input) {
     temperature: asNumber(req.temperature, 0.4),
     reasoning: { enabled: false },
   };
+  if (req.json === true) body.response_format = { type: "json_object" };
   const raw = await openrouterRequest("/chat/completions", "POST", body);
   const content = assistantContent(raw.choices && raw.choices[0] && raw.choices[0].message);
   if (!content) throw new Error("OPENROUTER_REQUEST_FAILED: empty assistant content");
-  return { content, model: asString(raw.model || body.model), raw };
+  let json;
+  if (req.json === true) {
+    try {
+      json = JSON.parse(content);
+    } catch (_error) {
+      throw new Error("OPENROUTER_INVALID_RESPONSE: expected one JSON object");
+    }
+    if (!json || typeof json !== "object" || Array.isArray(json)) {
+      throw new Error("OPENROUTER_INVALID_RESPONSE: expected one JSON object");
+    }
+  }
+  return { content, json, model: asString(raw.model || body.model), raw };
 }
