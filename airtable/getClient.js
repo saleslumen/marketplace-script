@@ -1,5 +1,5 @@
 /**
- * @description Load one Clients row by record id, namespace id, Linear issue id, or correlation id.
+ * @description Load one Clients row. namespaceId is the Clients key and rejects a mismatched recordId or a duplicate row.
  * Correlation/Linear selectors query the Operations table and return the matched operation.
  * @param {Object} input
  * @param {string} [input.recordId]
@@ -17,6 +17,25 @@ async function getClient(input) {
   const linearIssueId = asString(req.linearIssueId);
   const correlationId = asString(req.correlationId);
   const registry = await getRegistry();
+  if (namespaceId) {
+    const listed = await listByFormula(`{${FIELD.namespaceId}}='${escapeFormulaValue(namespaceId)}'`, 2);
+    if (listed.records.length > 1) {
+      throw new Error("AIRTABLE_REQUEST_FAILED: duplicate client for namespaceId");
+    }
+    if (!listed.records[0]) {
+      return { baseId: listed.baseId, tableName: listed.tableName, found: false, recordId: "" };
+    }
+    if (recordId && listed.records[0].recordId !== recordId) {
+      throw new Error("AIRTABLE_REQUEST_FAILED: recordId does not belong to namespaceId");
+    }
+    const withOps = await attachClientOperations({
+      ...listed.records[0],
+      baseId: listed.baseId,
+      tableName: listed.tableName,
+      found: true,
+    });
+    return withMatchedOperation(withOps, req);
+  }
   if (recordId) {
     const record = await airtableRequest(
       tablePath(registry.baseId, registry.tableName, `/${encodeURIComponent(recordId)}`),
@@ -27,19 +46,6 @@ async function getClient(input) {
       tableName: registry.tableName,
       found: true,
       ...mapRecord(record),
-    });
-    return withMatchedOperation(withOps, req);
-  }
-  if (namespaceId) {
-    const listed = await listByFormula(`{${FIELD.namespaceId}}='${escapeFormulaValue(namespaceId)}'`, 1);
-    if (!listed.records[0]) {
-      return { baseId: listed.baseId, tableName: listed.tableName, found: false, recordId: "" };
-    }
-    const withOps = await attachClientOperations({
-      ...listed.records[0],
-      baseId: listed.baseId,
-      tableName: listed.tableName,
-      found: true,
     });
     return withMatchedOperation(withOps, req);
   }

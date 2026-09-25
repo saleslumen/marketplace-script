@@ -34,8 +34,8 @@ async function writeStatus(input) {
   let recordId = asString(req.recordId);
   const namespaceId = asString(req.namespaceId);
   let current = null;
-  if (!recordId && namespaceId) {
-    current = await getClient({ namespaceId });
+  if (namespaceId) {
+    current = await getClient({ namespaceId, recordId });
     if (!current.found) throw new Error("AIRTABLE_REQUEST_FAILED: client not found for namespaceId");
     recordId = current.recordId;
   }

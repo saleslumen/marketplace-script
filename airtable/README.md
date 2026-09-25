@@ -19,7 +19,7 @@ This app has no installation settings.
 | `setRegistry` | Store the base and table ids and ensure the Clients and Operations schema. |
 | `ensureRegistrySchema` | Ensure the Clients and Operations tables and fields. |
 | `upsertClient` | Find or create one Clients row by namespace id. |
-| `getClient` | Get one Clients row by record id, namespace id, Linear issue id, or correlation id. |
+| `getClient` | Get one Clients row. A namespace id is the Clients key. A record id must belong to that namespace. Linear issue id or correlation id still selects an operation. |
 | `setNamespaceWorkflowIds` | Replace the namespace workflow id map on a Clients row. |
 | `mergeNamespaceWorkflowIds` | Merge namespace workflow ids into a Clients row. |
 | `reconcileClientGlance` | Recompute Clients glance fields from that client's Operations rows. |

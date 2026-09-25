@@ -21,7 +21,10 @@ async function upsertClient(input) {
   const req = input && typeof input === "object" ? input : {};
   const namespaceId = asString(req.namespaceId);
   if (!namespaceId) throw new Error("AIRTABLE_REQUEST_FAILED: namespaceId is required");
-  const existing = await listByFormula(`{${FIELD.namespaceId}}='${escapeFormulaValue(namespaceId)}'`, 1);
+  const existing = await listByFormula(`{${FIELD.namespaceId}}='${escapeFormulaValue(namespaceId)}'`, 2);
+  if (existing.records.length > 1) {
+    throw new Error("AIRTABLE_REQUEST_FAILED: duplicate client for namespaceId");
+  }
   const fields = {
     [FIELD.namespaceId]: namespaceId,
     [FIELD.updatedAt]: utcNowIso(),
