@@ -1,6 +1,6 @@
 # AI Ark
 
-AI Ark people search and export operations for a Saleslumen Marketplace app. Each operation is one function. `http.js` is shared request code.
+AI Ark API. Each operation is one function and returns the AI Ark response body. `http.js` is shared request code.
 
 ## Connection
 
@@ -16,10 +16,30 @@ This app has no installation settings.
 
 | Operation | What it does |
 | --- | --- |
-| `previewPeople` | Preview people that match a filter. |
 | `searchPeople` | Search people. |
-| `getExportStatus` | Read export status for one track id. |
-| `listExportInquiries` | List one page of export inquiries. |
-| `ensurePeopleExport` | Submit a people export, then read its status and inquiries. |
+| `previewPeople` | Preview people that match a filter. |
+| `searchCompanies` | Search companies, including lookalike seeds. |
+| `createOrUpdateList` | Create or update a list of people or company ids. |
+| `exportSinglePerson` | Export one person with email by id or profile url. |
+| `exportSinglePersonV2` | Export one person with email. A miss returns HTTP 200 and `data` null. |
+| `exportPeople` | Submit an export of people with email. |
+| `listExportInquiries` | List one page of export results for a trackId. |
+| `getExportStatus` | Read export statistics for a trackId. |
+| `listExportSubmissions` | List export submissions. |
+| `resendExportPeopleWebhook` | Resend an export completion webhook. |
+| `findEmailsByTrackId` | Start email finding for a people-search trackId. |
+| `listEmailFinderResults` | List one page of email-finder results for a trackId. |
+| `getEmailFinderStatistics` | Read email-finder statistics for a trackId. |
+| `listEmailFinderSubmissions` | List email-finder submissions. |
+| `resendEmailFinderWebhook` | Resend an email-finder completion webhook. |
+| `findMobilePhone` | Find a mobile phone by profile url, or by domain and name. |
+| `findMobilePhoneV2` | Find a mobile phone. A miss returns HTTP 200 and `data` null. |
+| `analyzePersonality` | Return a personality analysis for a profile url. |
+| `reversePeopleLookup` | Look up a person from an email address. |
+| `fetchCredit` | Read the remaining credit balance. |
 
 The JSDoc on each function is the parameter and error contract.
+
+## Errors
+
+Invalid input throws `AIARK_INVALID_INPUT: <reason>`. A non-2xx AI Ark response throws `AIARK_REQUEST_FAILED: <status> <message>`. The API key is not included in either error.
