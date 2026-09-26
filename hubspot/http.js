@@ -1,19 +1,73 @@
 const CONNECTION_KEY = "hubspot";
 const DEFAULT_API_VERSION = "2026-09";
 const API_ORIGIN = "https://api.hubapi.com";
-const BATCH_RECORD_LIMIT = 100;
-const ASSOCIATION_CREATE_LIMIT = 2000;
-const ASSOCIATION_ARCHIVE_FROM_LIMIT = 100;
 const asString = (value) => (value === undefined || value === null ? "" : String(value).trim());
 const asObject = (value) => (value && typeof value === "object" && !Array.isArray(value) ? value : {});
 const asArray = (value) => (Array.isArray(value) ? value : []);
-const asProperties = (value) => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("HUBSPOT_INVALID_INPUT: properties must be an object");
+const inputObject = (input) => {
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("HUBSPOT_INVALID_INPUT: input must be an object");
+  return Object.assign({}, input);
+};
+const requiredPath = (input, key) => {
+  const value = input[key];
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (typeof value !== "string" || !value.trim() || /[\s/]/.test(value.trim())) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  return value.trim();
+};
+const requiredStringField = (input, key) => {
+  const value = input[key];
+  if (typeof value !== "string" || !value.trim()) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  input[key] = value.trim();
+  return input[key];
+};
+const requiredPresent = (input, key) => {
+  if (!Object.prototype.hasOwnProperty.call(input, key) || input[key] === undefined || input[key] === null || input[key] === "") {
+    throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  }
+  return input[key];
+};
+const requiredObjectField = (input, key) => {
+  const value = input[key];
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
   return value;
 };
-const requireObject = (value, label) => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`HUBSPOT_INVALID_INPUT: ${label} must be an object`);
+const requiredArray = (input, key) => {
+  const value = input[key];
+  if (!Array.isArray(value) || !value.length) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
   return value;
+};
+const presentArray = (input, key) => {
+  if (!Array.isArray(input[key])) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  return input[key];
+};
+const requiredBoolean = (input, key) => {
+  if (typeof input[key] !== "boolean") throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  return input[key];
+};
+const requiredInteger = (input, key) => {
+  if (typeof input[key] !== "number" || !Number.isInteger(input[key])) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  return input[key];
+};
+const requiredRawString = (input, key) => {
+  const value = input[key];
+  if (typeof value !== "string" || value.length < 1) throw new Error(`HUBSPOT_INVALID_INPUT: ${key} is required`);
+  return value;
+};
+const queryFrom = (input, keys) => {
+  const query = {};
+  keys.forEach((key) => {
+    if (!Object.prototype.hasOwnProperty.call(input, key)) return;
+    query[key] = input[key];
+  });
+  return query;
+};
+const bodyFrom = (input, omitKeys) => {
+  const body = {};
+  Object.keys(input).forEach((key) => {
+    if (omitKeys.indexOf(key) !== -1 || input[key] === undefined) return;
+    body[key] = input[key];
+  });
+  return body;
 };
 const configValue = (key) => {
   const configuration = (ScriptContext && ScriptContext.configuration) || {};
@@ -24,76 +78,6 @@ const configuredApiVersion = () => {
   const raw = configValue("apiVersion") || DEFAULT_API_VERSION;
   if (/^\d{4}-\d{2}$/.test(raw)) return raw;
   throw new Error("HUBSPOT_NOT_CONFIGURED: apiVersion must look like 2026-09");
-};
-const requireObjectType = (value, label = "objectType") => {
-  const objectType = asString(value);
-  if (!objectType || /[\s/]/.test(objectType)) throw new Error(`HUBSPOT_INVALID_INPUT: ${label} is required`);
-  return objectType;
-};
-const requireId = (value, label = "id") => {
-  const id = asString(value);
-  if (!id) throw new Error(`HUBSPOT_INVALID_INPUT: ${label} is required`);
-  return id;
-};
-const requireList = (value, label, max) => {
-  const listed = asArray(value);
-  if (!listed.length) throw new Error(`HUBSPOT_INVALID_INPUT: ${label} is required`);
-  if (max && listed.length > max) throw new Error(`HUBSPOT_INVALID_INPUT: at most ${max} ${label}`);
-  return listed;
-};
-const requireObjectList = (value, label, max) => {
-  const listed = requireList(value, label, max);
-  listed.forEach((item, index) => {
-    if (!item || typeof item !== "object" || Array.isArray(item)) {
-      throw new Error(`HUBSPOT_INVALID_INPUT: ${label}[${index}] must be an object`);
-    }
-  });
-  return listed;
-};
-const requireInputs = (value) => requireObjectList(value, "inputs", BATCH_RECORD_LIMIT);
-const requireAssociationCreateInputs = (value) => requireObjectList(value, "inputs", ASSOCIATION_CREATE_LIMIT);
-const requireArchiveAssociationInputs = (value) => {
-  const listed = requireObjectList(value, "inputs");
-  const fromIds = new Set();
-  listed.forEach((item, index) => {
-    const fromId = asString(item.from && item.from.id);
-    fromIds.add(fromId || `missing:${index}`);
-  });
-  if (fromIds.size > ASSOCIATION_ARCHIVE_FROM_LIMIT) {
-    throw new Error(`HUBSPOT_INVALID_INPUT: at most ${ASSOCIATION_ARCHIVE_FROM_LIMIT} unique from inputs`);
-  }
-  return listed;
-};
-const optionalCommaList = (value, label) => {
-  if (value === undefined || value === null || value === "") return "";
-  if (typeof value !== "string") throw new Error(`HUBSPOT_INVALID_INPUT: ${label} must be a comma-separated string`);
-  return asString(value);
-};
-const optionalProperties = (value) => optionalCommaList(value, "properties");
-const optionalAssociations = (value) => optionalCommaList(value, "associations");
-const optionalIdProperty = (value) => {
-  if (value === undefined || value === null || value === "") return "";
-  if (typeof value !== "string") throw new Error("HUBSPOT_INVALID_INPUT: idProperty must be a string");
-  return asString(value);
-};
-const optionalAssociationList = (value) => {
-  if (value === undefined || value === null || value === "") return undefined;
-  if (!Array.isArray(value)) throw new Error("HUBSPOT_INVALID_INPUT: associations must be an array");
-  if (!value.length) return undefined;
-  value.forEach((item, index) => {
-    if (!item || typeof item !== "object" || Array.isArray(item)) {
-      throw new Error(`HUBSPOT_INVALID_INPUT: associations[${index}] must be an object`);
-    }
-  });
-  return value;
-};
-const optionalLimit = (value) => {
-  if (value === undefined || value === null || value === "") return undefined;
-  const limit = Number(value);
-  if (!Number.isInteger(limit) || limit < 1 || limit > BATCH_RECORD_LIMIT) {
-    throw new Error(`HUBSPOT_INVALID_INPUT: limit must be an integer from 1 to ${BATCH_RECORD_LIMIT}`);
-  }
-  return limit;
 };
 const queryString = (values) => {
   const query = [];
@@ -146,14 +130,6 @@ const apiPath = (path) => {
   }
   return raw.startsWith("/") ? raw : `/${raw}`;
 };
-const objectsPath = (objectType, rest) =>
-  `/crm/objects/${configuredApiVersion()}/${encodeURIComponent(requireObjectType(objectType))}${asString(rest)}`;
-const propertiesPath = (objectType) => `/crm/properties/${configuredApiVersion()}/${encodeURIComponent(requireObjectType(objectType))}`;
-const associationsBatchPath = (fromObjectType, toObjectType, rest) =>
-  `/crm/associations/${configuredApiVersion()}/${encodeURIComponent(requireObjectType(fromObjectType, "fromObjectType"))}/${encodeURIComponent(requireObjectType(toObjectType, "toObjectType"))}${asString(rest)}`;
-const objectAssociationsPath = (fromObjectType, fromId, toObjectType) =>
-  `/crm/objects/${configuredApiVersion()}/${encodeURIComponent(requireObjectType(fromObjectType, "fromObjectType"))}/${encodeURIComponent(requireId(fromId, "fromId"))}/associations/${encodeURIComponent(requireObjectType(toObjectType, "toObjectType"))}`;
-const accountPath = () => `/account-info/${configuredApiVersion()}/details`;
 const applyHeaders = (headers, extra) => {
   Object.entries(asObject(extra)).forEach(([key, value]) => {
     if (key.toLowerCase() === "authorization") throw new Error("HUBSPOT_INVALID_INPUT: Authorization cannot be overridden");
@@ -187,13 +163,13 @@ const requestJson = async (path, method, body, query, headers) => {
   const responseHeaders = response.getHeaders() || {};
   const contentType = headerValue(responseHeaders, "content-type");
   if (status < 200 || status >= 300) throw new Error(formatHubSpotError(status, text));
-  if (!text.trim()) return { success: true, status };
+  if (!text.trim()) return {};
   if (/octet-stream|image\/|audio\/|video\/|application\/zip|application\/pdf/i.test(contentType)) {
     throw new Error("HUBSPOT_REQUEST_FAILED: binary responses are not readable as text");
   }
   try {
     return JSON.parse(text);
   } catch (_error) {
-    return { success: true, status, text, contentType };
+    return text;
   }
 };

@@ -1,0 +1,17 @@
+/**
+ * @description Archive a property group. DELETE /crm/properties/{apiVersion}/{objectType}/groups/{groupName}.
+ * @param {Object} input
+ * @param {string} input.objectType
+ * @param {string} input.groupName
+ * @returns {Object} HubSpot response body. An empty 2xx body is {}.
+ * @throws {Error} HUBSPOT_INVALID_INPUT: <reason> when a required input is missing
+ * @throws {Error} HUBSPOT_NOT_CONFIGURED when apiVersion is invalid
+ * @throws {Error} AUTH_NOT_CONNECTED when HubSpot is not connected
+ * @throws {Error} HUBSPOT_REQUEST_FAILED when HubSpot returns a non-2xx status
+ */
+async function archivePropertyGroup(input) {
+  const req = inputObject(input);
+  const objectType = requiredPath(req, "objectType");
+  const groupName = requiredPath(req, "groupName");
+  return requestJson(`/crm/properties/${configuredApiVersion()}/${encodeURIComponent(objectType)}/groups/${encodeURIComponent(groupName)}`, "DELETE");
+}

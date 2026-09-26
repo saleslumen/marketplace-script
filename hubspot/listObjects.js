@@ -1,21 +1,21 @@
 /**
- * @description Search records. POST /crm/objects/{apiVersion}/{objectType}/search. Other input keys are the documented search body and are sent unchanged.
+ * @description List. GET /crm/objects/{apiVersion}/{objectType}.
  * @param {Object} input
  * @param {string} input.objectType
  * @param {string} [input.after]
- * @param {Object[]} [input.filterGroups]
+ * @param {boolean} [input.archived]
+ * @param {string|string[]} [input.associations]
  * @param {number} [input.limit]
- * @param {string[]} [input.properties]
- * @param {string[]} [input.sorts]
- * @param {string} [input.query]
+ * @param {string|string[]} [input.properties]
+ * @param {string|string[]} [input.propertiesWithHistory]
  * @returns {Object} HubSpot response body
  * @throws {Error} HUBSPOT_INVALID_INPUT: <reason> when a required input is missing
  * @throws {Error} HUBSPOT_NOT_CONFIGURED when apiVersion is invalid
  * @throws {Error} AUTH_NOT_CONNECTED when HubSpot is not connected
  * @throws {Error} HUBSPOT_REQUEST_FAILED when HubSpot returns a non-2xx status
  */
-async function searchRecords(input) {
+async function listObjects(input) {
   const req = inputObject(input);
   const objectType = requiredPath(req, "objectType");
-  return requestJson(`/crm/objects/${configuredApiVersion()}/${encodeURIComponent(objectType)}/search`, "POST", bodyFrom(req, ["objectType"]));
+  return requestJson(`/crm/objects/${configuredApiVersion()}/${encodeURIComponent(objectType)}`, "GET", undefined, queryFrom(req, ["after", "archived", "associations", "limit", "properties", "propertiesWithHistory"]));
 }

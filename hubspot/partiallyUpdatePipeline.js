@@ -1,0 +1,20 @@
+/**
+ * @description Update pipeline (Partial). PATCH /crm/pipelines/{apiVersion}/{objectType}/{pipelineId}. validateDealStageUsagesBeforeDelete and validateReferencesBeforeDelete are query parameters. Other input keys are the pipeline body.
+ * @param {Object} input
+ * @param {string} input.objectType
+ * @param {string} input.pipelineId
+ * @param {boolean} [input.validateDealStageUsagesBeforeDelete]
+ * @param {boolean} [input.validateReferencesBeforeDelete]
+ * @returns {Object} HubSpot response body. An empty 2xx body is {}.
+ * @throws {Error} HUBSPOT_INVALID_INPUT: <reason> when a required input is missing
+ * @throws {Error} HUBSPOT_NOT_CONFIGURED when apiVersion is invalid
+ * @throws {Error} AUTH_NOT_CONNECTED when HubSpot is not connected
+ * @throws {Error} HUBSPOT_REQUEST_FAILED when HubSpot returns a non-2xx status
+ */
+async function partiallyUpdatePipeline(input) {
+  const req = inputObject(input);
+  const objectType = requiredPath(req, "objectType");
+  const pipelineId = requiredPath(req, "pipelineId");
+  const omit = ["objectType", "pipelineId", "validateDealStageUsagesBeforeDelete", "validateReferencesBeforeDelete"];
+  return requestJson(`/crm/pipelines/${configuredApiVersion()}/${encodeURIComponent(objectType)}/${encodeURIComponent(pipelineId)}`, "PATCH", bodyFrom(req, omit), queryFrom(req, ["validateDealStageUsagesBeforeDelete", "validateReferencesBeforeDelete"]));
+}
