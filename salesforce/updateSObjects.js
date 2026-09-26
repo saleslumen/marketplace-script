@@ -1,18 +1,14 @@
 /**
- * @description Update up to 200 records with the sObject Collections API.
- * @param {string} sobject API name applied when a record omits attributes.type
- * @param {Object[]} records Field maps that include Id
- * @param {boolean} [allOrNone] Fail the whole request when one record fails
- * @returns {Object} Collection result
- * @property {Object[]} results
- * @throws {SALESFORCE_INVALID_INPUT} sobject or records are missing
- * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid
+ * @description Update up to 200 records. PATCH /services/data/vXX.X/composite/sobjects. Each record supplies id and attributes.type.
+ * @param {Object} input
+ * @param {boolean} [input.allOrNone] Roll back the request when one record fails
+ * @param {Object[]} input.records Records
+ * @returns {Object[]} Salesforce SaveResult list
+ * @throws {SALESFORCE_INVALID_INPUT} records is missing or longer than 200
+ * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid, or apiVersion is invalid
  * @throws {AUTH_NOT_CONNECTED} Salesforce is not connected
  * @throws {SALESFORCE_REQUEST_FAILED} Salesforce rejected or could not complete the request
  */
-async function updateSObjects(sobject, records, allOrNone) {
-  const type = requireSObject(sobject);
-  return {
-    results: asArray(await dataRequest("/composite/sobjects", "PATCH", { allOrNone: optionalFlag(allOrNone) === true, records: withSObjectType(type, records) })),
-  };
+async function updateSObjects(input) {
+  return dataRequest("/composite/sobjects", "PATCH", collectionBody(requireInput(input)));
 }

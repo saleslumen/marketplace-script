@@ -1,19 +1,15 @@
 /**
- * @description Create nested parent-child records with the sObject Tree API.
- * @param {string} sobject Root sObject API name
- * @param {Object[]} records Tree records
- * @returns {Object} Tree result
- * @property {boolean} hasErrors
- * @property {Object[]} results
- * @property {Object} raw Salesforce tree body
- * @throws {SALESFORCE_INVALID_INPUT} sobject or records are missing
- * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid
+ * @description Create sObject trees, up to 200 records. POST /services/data/vXX.X/composite/tree/sObjectName
+ * @param {Object} input
+ * @param {string} input.sObjectName Root object API name
+ * @param {Object[]} input.records Tree records
+ * @returns {Object} Salesforce tree response
+ * @throws {SALESFORCE_INVALID_INPUT} sObjectName or records is missing
+ * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid, or apiVersion is invalid
  * @throws {AUTH_NOT_CONNECTED} Salesforce is not connected
  * @throws {SALESFORCE_REQUEST_FAILED} Salesforce rejected or could not complete the request
  */
-async function createSObjectTree(sobject, records) {
-  const result = await dataRequest(`/composite/tree/${encodeURIComponent(requireSObject(sobject))}`, "POST", {
-    records: requireObjectList(records, "records", COLLECTION_RECORD_LIMIT),
-  });
-  return { hasErrors: result.hasErrors === true, results: asArray(result.results), raw: result };
+async function createSObjectTree(input) {
+  const req = requireInput(input);
+  return dataRequest(`/composite/tree/${encodeURIComponent(requireApiName(req.sObjectName, "sObjectName"))}`, "POST", { records: requireObjectList(req.records, "records", COLLECTION_RECORD_LIMIT) });
 }

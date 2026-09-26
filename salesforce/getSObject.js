@@ -1,23 +1,21 @@
 /**
- * @description Get one record by id.
- * @param {string} sobject API name such as Account
- * @param {string} id Record id
- * @param {string} [fields] Optional comma-separated field list
- * @returns {Object} Record
- * @throws {SALESFORCE_INVALID_INPUT} sobject or id is missing
- * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid
+ * @description Get one record. GET /services/data/vXX.X/sobjects/sObject/id/
+ * @param {Object} input
+ * @param {string} input.sObject Object API name
+ * @param {string} input.id Record id
+ * @param {string} [input.fields] Comma-separated field list
+ * @param {string} [input.If-Match] Account ETag precondition
+ * @param {string} [input.If-None-Match] Account ETag precondition
+ * @param {string} [input.If-Modified-Since] Modification precondition
+ * @param {string} [input.If-Unmodified-Since] Modification precondition
+ * @returns {Object} Salesforce record
+ * @throws {SALESFORCE_INVALID_INPUT} sObject or id is missing
+ * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid, or apiVersion is invalid
  * @throws {AUTH_NOT_CONNECTED} Salesforce is not connected
  * @throws {SALESFORCE_REQUEST_FAILED} Salesforce rejected or could not complete the request
  */
-async function getSObject(sobject, id, fields) {
-  if (fields !== undefined && fields !== null && typeof fields !== "string") {
-    throw new Error("SALESFORCE_INVALID_INPUT: fields must be a comma-separated string");
-  }
-  const listed = asString(fields).split(",").map(asString).filter(Boolean);
-  return dataRequest(
-    `/sobjects/${encodeURIComponent(requireSObject(sobject))}/${encodeURIComponent(requireId(id))}`,
-    "GET",
-    undefined,
-    listed.length ? { fields: listed.join(",") } : undefined
-  );
+async function getSObject(input) {
+  const req = requireInput(input);
+  const fields = optionalText(req.fields, "fields");
+  return dataRequest(sObjectPath(req.sObject, `/${encodeURIComponent(requireId(req.id))}/`), "GET", undefined, fields === undefined ? undefined : { fields }, conditionalHeaders(req));
 }

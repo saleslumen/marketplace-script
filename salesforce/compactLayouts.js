@@ -1,14 +1,14 @@
 /**
- * @description Execute a SOSL search. GET /services/data/vXX.X/search/?q=SOSL_searchString
+ * @description List compact layouts for the objects in q. GET /services/data/vXX.X/compactLayouts?q=objectList
  * @param {Object} input
- * @param {string} input.q SOSL statement
- * @returns {Object} Salesforce search response
+ * @param {string} input.q Comma-separated object API names
+ * @returns {Object} Salesforce compact layouts
  * @throws {SALESFORCE_INVALID_INPUT} q is missing
  * @throws {SALESFORCE_NOT_CONFIGURED} instanceUrl is missing or invalid, or apiVersion is invalid
  * @throws {AUTH_NOT_CONNECTED} Salesforce is not connected
  * @throws {SALESFORCE_REQUEST_FAILED} Salesforce rejected or could not complete the request
  */
-async function search(input) {
+async function compactLayouts(input) {
   const req = requireInput(input);
-  return dataRequest("/search/", "GET", undefined, { q: requireText(req.q, "q") });
+  return dataRequest("/compactLayouts", "GET", undefined, { q: requireCommaSeparated(req.q, "q") });
 }

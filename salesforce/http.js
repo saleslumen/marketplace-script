@@ -2,14 +2,11 @@ const CONNECTION_KEY = "salesforce";
 const DEFAULT_API_VERSION = "v68.0";
 const SOBJECT_NAME = /^[A-Za-z][A-Za-z0-9_]*$/;
 const COLLECTION_RECORD_LIMIT = 200;
+const COLLECTION_RETRIEVE_LIMIT = 2000;
 const COMPOSITE_REQUEST_LIMIT = 25;
+const CONDITIONAL_HEADERS = ["If-Match", "If-None-Match", "If-Modified-Since", "If-Unmodified-Since"];
 const asString = (value) => (value === undefined || value === null ? "" : String(value).trim());
 const asObject = (value) => (value && typeof value === "object" && !Array.isArray(value) ? value : {});
-const asArray = (value) => (Array.isArray(value) ? value : []);
-const asFields = (value) => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("SALESFORCE_INVALID_INPUT: fields must be an object");
-  return value;
-};
 const configValue = (key) => {
   const configuration = (ScriptContext && ScriptContext.configuration) || {};
   const value = configuration[key];
@@ -28,25 +25,52 @@ const configuredInstanceUrl = () => {
 };
 const configuredApiVersion = () => {
   const raw = (configValue("apiVersion") || DEFAULT_API_VERSION).replace(/^v/i, "");
-  if (raw.toLowerCase() === "latest") return "latest";
-  if (!/^\d+\.\d+$/.test(raw)) throw new Error("SALESFORCE_NOT_CONFIGURED: apiVersion must look like v68.0 or latest");
+  if (!/^\d+\.\d+$/.test(raw)) throw new Error("SALESFORCE_NOT_CONFIGURED: apiVersion must look like v68.0");
   return `v${raw}`;
 };
-const requireSObject = (value) => {
-  const sobject = asString(value);
-  if (!SOBJECT_NAME.test(sobject)) throw new Error("SALESFORCE_INVALID_INPUT: sobject is required and must be an API name");
-  return sobject;
+const requireInput = (input) => {
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("SALESFORCE_INVALID_INPUT: input must be an object");
+  return input;
 };
-const requireId = (value, label = "id") => {
-  const id = asString(value);
-  if (!id) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} is required`);
-  return id;
+const requireText = (value, label) => {
+  if (typeof value !== "string") throw new Error(`SALESFORCE_INVALID_INPUT: ${label} must be a string`);
+  const text = value.trim();
+  if (!text) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} is required`);
+  return text;
+};
+const optionalText = (value, label) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  return requireText(value, label);
+};
+const requireApiName = (value, label) => {
+  const name = requireText(value, label);
+  if (!SOBJECT_NAME.test(name)) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} must be an API name`);
+  return name;
+};
+const requireSObject = (value) => requireApiName(value, "sObject");
+const requireId = (value, label = "id") => requireText(value, label);
+const requireQueryLocator = (value) => {
+  const locator = requireText(value, "queryLocator");
+  if (locator.includes("/") || locator.includes("?") || locator.includes("&")) {
+    throw new Error("SALESFORCE_INVALID_INPUT: queryLocator must be the locator token");
+  }
+  return locator;
+};
+const optionalBoolean = (value, label) => {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "boolean") throw new Error(`SALESFORCE_INVALID_INPUT: ${label} must be a boolean`);
+  return value;
+};
+const assignBoolean = (target, req, label) => {
+  const value = optionalBoolean(req[label], label);
+  if (value !== undefined) target[label] = value;
+  return target;
 };
 const requireList = (value, label, max) => {
-  const listed = asArray(value);
-  if (!listed.length) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} is required`);
-  if (max && listed.length > max) throw new Error(`SALESFORCE_INVALID_INPUT: at most ${max} ${label}`);
-  return listed;
+  if (!Array.isArray(value)) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} must be an array`);
+  if (!value.length) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} is required`);
+  if (max && value.length > max) throw new Error(`SALESFORCE_INVALID_INPUT: at most ${max} ${label}`);
+  return value;
 };
 const requireObjectList = (value, label, max) => {
   const listed = requireList(value, label, max);
@@ -57,12 +81,40 @@ const requireObjectList = (value, label, max) => {
   });
   return listed;
 };
-const optionalFlag = (value) => {
-  if (value === true || value === false) return value;
-  if (asString(value).toLowerCase() === "true") return true;
-  if (asString(value).toLowerCase() === "false") return false;
-  return undefined;
+const requireStringArray = (value, label, max) => {
+  const listed = requireList(value, label, max);
+  listed.forEach((item, index) => {
+    if (typeof item !== "string" || item.trim() === "") throw new Error(`SALESFORCE_INVALID_INPUT: ${label}[${index}] must be a string`);
+  });
+  return listed;
 };
+const requireCommaSeparated = (value, label, max) => {
+  const text = requireText(value, label);
+  const parts = text.split(",");
+  if (parts.some((part) => part.trim() === "")) throw new Error(`SALESFORCE_INVALID_INPUT: ${label} must be a comma-separated list`);
+  if (max && parts.length > max) throw new Error(`SALESFORCE_INVALID_INPUT: at most ${max} ${label}`);
+  return text;
+};
+const recordBody = (req, reserved) => {
+  const record = {};
+  Object.keys(req).forEach((key) => {
+    if (reserved.indexOf(key) !== -1) return;
+    record[key] = req[key];
+  });
+  return record;
+};
+const conditionalHeaders = (req) => {
+  const headers = {};
+  CONDITIONAL_HEADERS.forEach((name) => {
+    const value = req[name];
+    if (value === undefined || value === null || value === "") return;
+    if (typeof value !== "string") throw new Error(`SALESFORCE_INVALID_INPUT: ${name} must be a string`);
+    headers[name] = value;
+  });
+  return Object.keys(headers).length ? headers : undefined;
+};
+const collectionBody = (req) => assignBoolean({ records: requireObjectList(req.records, "records", COLLECTION_RECORD_LIMIT) }, req, "allOrNone");
+const sObjectPath = (sObject, suffix) => `/sobjects/${encodeURIComponent(requireSObject(sObject))}${suffix || ""}`;
 const queryString = (values) => {
   const query = [];
   Object.entries(asObject(values)).forEach(([key, value]) => {
@@ -78,10 +130,6 @@ const headerValue = (headers, name) => {
   return found ? asString(listed[found]) : "";
 };
 const hasHeader = (headers, name) => Object.keys(asObject(headers)).some((key) => key.toLowerCase() === name.toLowerCase());
-const locationId = (location) => {
-  const parts = asString(location).split("?")[0].split("/").filter(Boolean);
-  return parts.length ? asString(parts[parts.length - 1]) : "";
-};
 const formatSalesforceError = (status, text) => {
   const raw = asString(text);
   if (!raw) return `SALESFORCE_REQUEST_FAILED (${status})`;
@@ -125,12 +173,6 @@ const applyHeaders = (headers, extra) => {
   });
   return headers;
 };
-const queryResult = (result) => ({
-  totalSize: Number(result.totalSize) || 0,
-  done: result.done !== false,
-  nextRecordsUrl: asString(result.nextRecordsUrl),
-  records: asArray(result.records),
-});
 const requestJson = async (path, method, body, query, headers) => {
   const token = await ConnectionApp.getAccessToken(CONNECTION_KEY);
   let suffix = instancePath(path);
@@ -156,26 +198,14 @@ const requestJson = async (path, method, body, query, headers) => {
   const responseHeaders = response.getHeaders() || {};
   const contentType = headerValue(responseHeaders, "content-type");
   if (status < 200 || status >= 300) throw new Error(formatSalesforceError(status, text));
-  if (!text.trim()) return { success: true, status, location: headerValue(responseHeaders, "location") };
+  if (!text.trim()) return {};
   if (/octet-stream|image\/|audio\/|video\/|application\/zip|application\/pdf/i.test(contentType)) {
     throw new Error("SALESFORCE_REQUEST_FAILED: binary responses are not readable as text");
   }
   try {
     return JSON.parse(text);
   } catch (_error) {
-    return { success: true, status, text, contentType };
+    return text;
   }
 };
 const dataRequest = (path, method, body, query, headers) => requestJson(dataPath(path), method, body, query, headers);
-const withSObjectType = (sobject, records) =>
-  requireObjectList(records, "records", COLLECTION_RECORD_LIMIT).map((record, index) => {
-    const fields = record;
-    const attributes = asObject(fields.attributes);
-    const type = asString(attributes.type) || sobject;
-    if (!SOBJECT_NAME.test(type)) {
-      throw new Error(`SALESFORCE_INVALID_INPUT: records[${index}] needs sobject or attributes.type`);
-    }
-    const next = { ...fields };
-    delete next.attributes;
-    return { ...next, attributes: { ...attributes, type } };
-  });
