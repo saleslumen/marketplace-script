@@ -1,50 +1,29 @@
 /**
- * @description List DNS records for a zone (optional type/name filters).
+ * @description List, search, sort, and filter a zone's DNS records. GET /zones/{zone_id}/dns_records. Nested filters use the documented objects and are sent as dotted query keys, for example name.exact.
  * @param {Object} input
- * @param {string} input.accountId
- * @param {string} [input.zoneId]
- * @param {string} [input.domain] - Resolve zone by name when zoneId omitted
+ * @param {string} input.zone_id
+ * @param {Object} [input.comment]
+ * @param {Object} [input.content]
+ * @param {"asc"|"desc"} [input.direction]
+ * @param {boolean} [input.include_shadow_metadata]
+ * @param {"any"|"all"} [input.match]
+ * @param {Object} [input.name]
+ * @param {"type"|"name"|"content"|"ttl"|"proxied"} [input.order]
+ * @param {number} [input.page]
+ * @param {number} [input.per_page]
+ * @param {boolean} [input.proxied]
+ * @param {string} [input.search]
+ * @param {string} [input.shadowed_by_name]
+ * @param {string} [input.shadowing_name]
+ * @param {Object} [input.tag]
+ * @param {"any"|"all"} [input.tag_match]
  * @param {string} [input.type]
- * @param {string} [input.name]
- * @returns {Object}
+ * @returns {Object} Cloudflare response body
+ * @throws {Error} CLOUDFLARE_INVALID_INPUT: <reason> when a required input is missing
+ * @throws {Error} CLOUDFLARE_REQUEST_FAILED: <status> <first error message> when Cloudflare returns a non-2xx status
  */
 async function listDnsRecords(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const accountId = asString(req.accountId || req.cloudflareAccountId);
-  if (!accountId) {
-    return { ok: false, outcome: "MISSING_ACCOUNT", records: [], failure: "accountId is required" };
-  }
-  let zoneId = asString(req.zoneId);
-  let zoneName = asString(req.domain || req.zoneName);
-  if (!zoneId) {
-    if (!zoneName) {
-      return { ok: false, outcome: "MISSING_ZONE", records: [], failure: "zoneId or domain is required" };
-    }
-    const existing = await findExistingZone(zoneName, accountId);
-    if (!existing) {
-      return { ok: false, outcome: "ZONE_NOT_FOUND", records: [], failure: `No zone for ${zoneName}` };
-    }
-    zoneId = asString(existing.id);
-    zoneName = asString(existing.name || zoneName);
-  }
-  const params = ["per_page=100"];
-  if (asString(req.type)) params.push(`type=${encodeURIComponent(asString(req.type))}`);
-  if (asString(req.name)) params.push(`name=${encodeURIComponent(normalizeDnsHost(req.name, zoneName))}`);
-  const result = await cloudflareRequest(
-    `/zones/${encodeURIComponent(zoneId)}/dns_records?${params.join("&")}`,
-    "GET",
-    undefined,
-    accountId,
-  );
-  const rows = Array.isArray(result) ? result : [];
-  const records = rows.map((row) => ({
-    id: asString(row.id),
-    type: asString(row.type),
-    name: asString(row.name),
-    content: asString(row.content),
-    ttl: row.ttl,
-    proxied: row.proxied === true,
-    priority: row.priority,
-  }));
-  return { ok: true, outcome: "LISTED", accountId, zoneId, zoneName, records, count: records.length, failure: "" };
+  const req = inputObject(input);
+  const zoneId = requiredString(req, "zone_id");
+  return cloudflareRequest(withQuery(`/zones/${encodeURIComponent(zoneId)}/dns_records`, req, LIST_DNS_RECORD_QUERY), "GET");
 }

@@ -19,7 +19,7 @@
         "authorizationMode": "USER",
         "required": true,
         "displayLabel": "Cloudflare",
-        "helpText": "Paste the Cloudflare API token for this account. The app sends it to Cloudflare as a bearer token. Pass the account id on each operation."
+        "helpText": "Paste the Cloudflare API token. The app sends it to Cloudflare as a bearer token."
       }
     ]
   }
