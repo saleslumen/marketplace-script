@@ -1,30 +1,13 @@
 /**
- * @description Live DNS health check for SPF, DKIM, DMARC, and MX.
+ * @description Check SPF, DKIM, DMARC, and MX for one email account.
  * @param {Object} input
- * @param {string} input.emailAccountId
+ * @param {number} input.emailAccountId
  * @returns {Object}
+ * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
+ * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
 async function getDnsHealth(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const emailAccountId = accountIdFrom(req);
-  if (!emailAccountId) {
-    return { ok: false, outcome: "MISSING_EMAIL_ACCOUNT", retryable: false, failure: "emailAccountId is required" };
-  }
-  const classified = classifyHttp(await trulyinboxRequestRaw(`/dns-health/${encodeURIComponent(emailAccountId)}`, "GET"));
-  if (classified.status === 429 || classified.retryable) {
-    return rateLimitedResult(classified, { emailAccountId });
-  }
-  if (classified.status === 404) {
-    return { ok: false, outcome: "DNS_HEALTH_MISSING", retryable: false, emailAccountId, failure: classified.message || "DNS health not found" };
-  }
-  if (classified.status < 200 || classified.status >= 300) {
-    return {
-      ok: false,
-      outcome: "DNS_HEALTH_FAILED",
-      retryable: false,
-      emailAccountId,
-      failure: classified.message || `DNS health failed (${classified.status})`,
-    };
-  }
-  return { ok: true, outcome: "DNS_HEALTH", retryable: false, failure: "", ...mapDnsHealth(classified.body) };
+  const req = requireObjectInput(input);
+  const emailAccountId = readRequired(req, "emailAccountId", "emailAccountId", "number");
+  return trulyinboxRequest("GET", `/dns-health/${encodeURIComponent(emailAccountId)}`);
 }

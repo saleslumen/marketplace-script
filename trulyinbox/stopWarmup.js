@@ -1,36 +1,13 @@
 /**
- * @description Stop warmup for one connected email account.
+ * @description Stop warmup for one email account.
  * @param {Object} input
- * @param {string} input.emailAccountId
+ * @param {number} input.emailAccountId
  * @returns {Object}
+ * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
+ * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
 async function stopWarmup(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const emailAccountId = accountIdFrom(req);
-  if (!emailAccountId) {
-    return { ok: false, outcome: "MISSING_EMAIL_ACCOUNT", retryable: false, failure: "emailAccountId is required" };
-  }
-  const classified = classifyHttp(await trulyinboxRequestRaw(`/warmup-settings/${encodeURIComponent(emailAccountId)}/stop`, "POST"));
-  if (classified.status === 429 || classified.retryable) {
-    return rateLimitedResult(classified, { emailAccountId });
-  }
-  if (classified.status === 422) {
-    return {
-      ok: false,
-      outcome: "WARMUP_STOP_REJECTED",
-      retryable: false,
-      emailAccountId,
-      failure: classified.message || "Warmup stop rejected",
-    };
-  }
-  if (classified.status < 200 || classified.status >= 300) {
-    return {
-      ok: false,
-      outcome: "WARMUP_STOP_FAILED",
-      retryable: false,
-      emailAccountId,
-      failure: classified.message || `Warmup stop failed (${classified.status})`,
-    };
-  }
-  return { ok: true, outcome: "WARMUP_STOPPED", retryable: false, emailAccountId, failure: "" };
+  const req = requireObjectInput(input);
+  const emailAccountId = readRequired(req, "emailAccountId", "emailAccountId", "number");
+  return trulyinboxRequest("POST", `/warmup-settings/${encodeURIComponent(emailAccountId)}/stop`);
 }

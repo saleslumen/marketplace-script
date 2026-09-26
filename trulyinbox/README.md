@@ -1,6 +1,8 @@
 # TrulyInbox
 
-TrulyInbox workspace, mailbox, warmup, and DNS health operations for a Saleslumen Marketplace app. Each operation is one function. `http.js` is shared request code.
+TrulyInbox email account, workspace, warmup, deliverability, and report operations for a Saleslumen Marketplace app. Each operation is one function. `http.js` is shared request code. A successful call returns the TrulyInbox response body.
+
+Documentation: [https://developer.trulyinbox.com/api-reference/introduction](https://developer.trulyinbox.com/api-reference/introduction)
 
 ## Connection
 
@@ -14,41 +16,40 @@ This app has no installation settings.
 
 ## Operations
 
-| Operation | What it does |
-| --- | --- |
-| `registerGoogleWorkspace` | Register a Google Workspace for bulk connect. |
-| `previewWorkspaceMailboxes` | Preview mailboxes not yet connected. |
-| `syncWorkspace` | Start bulk-connect sync. |
-| `getWorkspaceSyncStatus` | Read one sync job. |
-| `listEmailAccounts` | List connected email accounts. |
-| `getEmailAccount` | Get one email account. |
-| `startWarmup` | Start warmup for one connected email account. |
-| `getWarmupSettings` | Get warmup settings for one email account. |
-| `updateWarmupSettings` | Update warmup settings for one email account. |
-| `getWarmupStatus` | Get warmup status for one email account. |
-| `stopWarmup` | Stop warmup for one connected email account. |
-| `bulkWarmupAction` | Start or stop warmup for many email accounts. |
-| `getMicrosoftWorkspaceConsentUrl` | Get the Microsoft admin-consent URL for tenant-wide bulk connect. |
-| `registerMicrosoftWorkspace` | Register a Microsoft tenant workspace after admin consent. |
-| `getMicrosoftMailboxConsentUrl` | Get a single-use Microsoft mailbox OAuth consent URL. |
-| `connectSmtpImapAccount` | Connect one mailbox with SMTP/IMAP credentials. |
-| `connectEmailAccountOAuth` | Connect one mailbox with OAuth. |
-| `disconnectEmailAccount` | Temporarily disconnect an email account without deleting it. |
-| `deleteEmailAccount` | Permanently delete one email account and its warmup history. |
-| `getEmailAccountsBulkStatus` | Get status for up to 50 email accounts. |
-| `deleteEmailAccountsBulk` | Permanently delete up to 20 email accounts. |
-| `assignEmailAccountTags` | Assign tags to email accounts. |
-| `unassignEmailAccountTags` | Unassign tags from email accounts. |
-| `getSetupScore` | Get the cached setup score. |
-| `refreshSetupScore` | Refresh the setup score for one email account. |
-| `getDnsHealth` | Check SPF, DKIM, DMARC, and MX. |
-| `getDeliverabilityScore` | Get warmup deliverability rates for a date range. |
-| `getAccountReport` | Daily warmup report for one email account. |
-| `getBulkReport` | Daily warmup reports for up to 50 email accounts. |
-| `exportReport` | Email a warmup report as CSV. |
-| `getDashboard` | Get account-wide warmup totals. |
-| `getHealth` | Check whether the API is available. |
-| `getRateLimit` | Read the current rate-limit window. |
-| `ensureGoogleWorkspaceWarmup` | Register or reuse a Google Workspace, sync the expected mailboxes, and start warmup. |
+| Function | Method and path | Required inputs |
+| --- | --- | --- |
+| `health` | `GET /v1/health` | none |
+| `getRateLimitStatus` | `GET /v1/rate-limit` | none |
+| `listEmailAccounts` | `GET /v1/email-accounts` | none |
+| `connectSmtpImapAccount` | `POST /v1/email-accounts` | `emailServiceProvider`, `smtp.emailAddress`, `smtp.host`, `smtp.port`, `smtp.password`, `smtp.encryption`, `imap.host`, `imap.port`, `imap.password`, `imap.encryption` |
+| `getMicrosoftSingleConsentUrl` | `GET /v1/email-accounts/microsoft/consent-url` | `email` |
+| `disconnectEmailAccount` | `POST /v1/email-accounts/{emailAccountId}/disconnect` | `emailAccountId` |
+| `deleteEmailAccount` | `DELETE /v1/email-accounts/{emailAccountId}` | `emailAccountId` |
+| `deleteEmailAccountsBulk` | `POST /v1/email-accounts/bulk-delete` | `emailAccountIds` |
+| `getEmailAccountStatus` | `GET /v1/email-accounts/{emailAccountId}/status` | `emailAccountId` |
+| `getBulkEmailAccountStatus` | `POST /v1/email-accounts/bulk-status` | `emailAccountIds` |
+| `assignEmailAccountTags` | `POST /v1/email-accounts/tags/assign` | `emailAccountIds`, `tags` |
+| `unassignEmailAccountTags` | `POST /v1/email-accounts/tags/unassign` | `emailAccountIds`, `tags` |
+| `getMicrosoftConsentUrl` | `GET /v1/workspaces/microsoft/consent-url` | none |
+| `connectWorkspace` | `POST /v1/workspaces` | `provider`; `adminEmail` when `provider` is `google`; `tenantId` when `provider` is `microsoft` |
+| `getWorkspaceSyncPreview` | `GET /v1/workspaces/{workspaceId}/preview` | `workspaceId` |
+| `confirmWorkspaceSync` | `POST /v1/workspaces/{workspaceId}/sync` | `workspaceId`, `selectAll`, `enableWarmup` |
+| `getWorkspaceSyncStatus` | `GET /v1/workspaces/{workspaceId}/sync-status` | `workspaceId`, `jobId` |
+| `getWarmupSettings` | `GET /v1/warmup-settings/{emailAccountId}` | `emailAccountId` |
+| `getWarmupStatus` | `GET /v1/warmup-status/{emailAccountId}` | `emailAccountId` |
+| `updateWarmupSettings` | `PATCH /v1/warmup-settings/{emailAccountId}` | `emailAccountId` |
+| `startWarmup` | `POST /v1/warmup-settings/{emailAccountId}/start` | `emailAccountId` |
+| `stopWarmup` | `POST /v1/warmup-settings/{emailAccountId}/stop` | `emailAccountId` |
+| `bulkWarmupAction` | `POST /v1/warmup-settings/bulk-action` | `action` |
+| `getSetupScore` | `GET /v1/setup-score/{emailAccountId}` | `emailAccountId` |
+| `refreshSetupScore` | `POST /v1/setup-score/{emailAccountId}/refresh` | `emailAccountId` |
+| `getDnsHealth` | `GET /v1/dns-health/{emailAccountId}` | `emailAccountId` |
+| `getDeliverabilityScore` | `POST /v1/deliverability-score/{emailAccountId}` | `emailAccountId`, `startDate`, `endDate` |
+| `getDashboard` | `GET /v1/dashboard` | none |
+| `getSingleReport` | `POST /v1/reports` | `emailAccountId` |
+| `getBulkReport` | `POST /v1/reports/bulk` | `emailAccountIds` |
+| `exportReport` | `POST /v1/reports/export` | `from`, `to` |
+
+OAuth email-account connect is documented as unavailable and is therefore not exposed.
 
 The JSDoc on each function is the parameter and error contract.

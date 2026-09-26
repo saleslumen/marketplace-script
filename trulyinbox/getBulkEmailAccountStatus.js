@@ -1,17 +1,13 @@
 /**
- * @description Get daily warmup reports for up to 50 email accounts.
+ * @description Get status for up to 50 email accounts.
  * @param {Object} input
  * @param {number[]} input.emailAccountIds
- * @param {string} [input.from] YYYY-MM-DD.
- * @param {string} [input.to] YYYY-MM-DD.
  * @returns {Object}
  * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
  * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
-async function getBulkReport(input) {
+async function getBulkEmailAccountStatus(input) {
   const req = requireObjectInput(input);
   const body = { emailAccountIds: readRequired(req, "emailAccountIds", "emailAccountIds", "array") };
-  if (req.from !== undefined) body.from = req.from;
-  if (req.to !== undefined) body.to = req.to;
-  return trulyinboxRequest("POST", "/reports/bulk", body);
+  return trulyinboxRequest("POST", "/email-accounts/bulk-status", body);
 }

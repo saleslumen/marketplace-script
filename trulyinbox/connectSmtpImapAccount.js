@@ -1,82 +1,49 @@
 /**
- * @description Connect one mailbox with SMTP/IMAP credentials. Callers must supply passwords; they are sent to TrulyInbox only and never returned, logged, or persisted in the result.
+ * @description Connect an email account with SMTP and IMAP credentials.
  * @param {Object} input
+ * @param {string} [input.fromName]
  * @param {string} input.emailServiceProvider
  * @param {Object} input.smtp
+ * @param {string} input.smtp.emailAddress
+ * @param {string} input.smtp.host
+ * @param {number} input.smtp.port
+ * @param {string} input.smtp.password
+ * @param {boolean} input.smtp.encryption
+ * @param {string} [input.smtp.userName]
  * @param {Object} input.imap
- * @param {string} [input.fromName]
+ * @param {string} [input.imap.emailAddress]
+ * @param {string} input.imap.host
+ * @param {number} input.imap.port
+ * @param {string} input.imap.password
+ * @param {boolean} input.imap.encryption
  * @returns {Object}
+ * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
+ * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
 async function connectSmtpImapAccount(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const emailServiceProvider = asString(req.emailServiceProvider).toLowerCase();
-  const smtpIn = req.smtp && typeof req.smtp === "object" ? req.smtp : {};
-  const imapIn = req.imap && typeof req.imap === "object" ? req.imap : {};
-  const missing = [];
-  if (!SMTP_IMAP_PROVIDERS.includes(emailServiceProvider)) missing.push("emailServiceProvider");
-  if (!asString(smtpIn.emailAddress)) missing.push("smtp.emailAddress");
-  if (!asString(smtpIn.host)) missing.push("smtp.host");
-  if (!Number.isFinite(asNumber(smtpIn.port, NaN))) missing.push("smtp.port");
-  if (!asString(smtpIn.password)) missing.push("smtp.password");
-  if (!hasOwnField(smtpIn, "encryption")) missing.push("smtp.encryption");
-  if (!asString(imapIn.host)) missing.push("imap.host");
-  if (!Number.isFinite(asNumber(imapIn.port, NaN))) missing.push("imap.port");
-  if (!asString(imapIn.password)) missing.push("imap.password");
-  if (!hasOwnField(imapIn, "encryption")) missing.push("imap.encryption");
-  if (missing.length) {
-    return {
-      ok: false,
-      outcome: "MISSING_SMTP_IMAP",
-      retryable: false,
-      failure: `Required fields missing: ${missing.join(", ")}`,
-    };
-  }
+  const req = requireObjectInput(input);
+  const smtpIn = readRequired(req, "smtp", "smtp", "object");
+  const imapIn = readRequired(req, "imap", "imap", "object");
   const smtp = {
-    emailAddress: asString(smtpIn.emailAddress).toLowerCase(),
-    host: asString(smtpIn.host),
-    port: asNumber(smtpIn.port, 0),
-    password: asString(smtpIn.password),
-    encryption: asBoolean(smtpIn.encryption, false),
+    emailAddress: readRequired(smtpIn, "emailAddress", "smtp.emailAddress", "string"),
+    host: readRequired(smtpIn, "host", "smtp.host", "string"),
+    port: readRequired(smtpIn, "port", "smtp.port", "number"),
+    password: readRequired(smtpIn, "password", "smtp.password", "string"),
+    encryption: readRequired(smtpIn, "encryption", "smtp.encryption", "boolean"),
   };
-  if (asString(smtpIn.userName)) smtp.userName = asString(smtpIn.userName);
+  if (smtpIn.userName !== undefined) smtp.userName = smtpIn.userName;
   const imap = {
-    host: asString(imapIn.host),
-    port: asNumber(imapIn.port, 0),
-    password: asString(imapIn.password),
-    encryption: asBoolean(imapIn.encryption, false),
+    host: readRequired(imapIn, "host", "imap.host", "string"),
+    port: readRequired(imapIn, "port", "imap.port", "number"),
+    password: readRequired(imapIn, "password", "imap.password", "string"),
+    encryption: readRequired(imapIn, "encryption", "imap.encryption", "boolean"),
   };
-  if (asString(imapIn.emailAddress)) imap.emailAddress = asString(imapIn.emailAddress).toLowerCase();
-  const body = { emailServiceProvider, smtp, imap };
-  if (asString(req.fromName)) body.fromName = asString(req.fromName);
-  const classified = classifyHttp(await trulyinboxRequestRaw("/email-accounts", "POST", body));
-  if (classified.status === 429 || classified.retryable) {
-    return rateLimitedResult(classified);
-  }
-  if (classified.status === 409) {
-    return {
-      ok: false,
-      outcome: "SMTP_ACCOUNT_CONFLICT",
-      retryable: false,
-      failure: classified.message || "SMTP/IMAP account already connected",
-    };
-  }
-  if (classified.status < 200 || classified.status >= 300) {
-    return {
-      ok: false,
-      outcome: "SMTP_IMAP_CONNECT_FAILED",
-      retryable: false,
-      failure: classified.message || `SMTP/IMAP connect failed (${classified.status})`,
-    };
-  }
-  return {
-    ok: true,
-    outcome: "SMTP_IMAP_CONNECTED",
-    retryable: false,
-    failure: "",
-    emailAccountId: asString(classified.body.emailAccountId),
-    fromEmail: asString(classified.body.fromEmail).toLowerCase(),
-    fromName: asString(classified.body.fromName),
-    type: asString(classified.body.type),
-    status: asString(classified.body.status).toLowerCase(),
+  if (imapIn.emailAddress !== undefined) imap.emailAddress = imapIn.emailAddress;
+  const body = {
+    emailServiceProvider: readRequired(req, "emailServiceProvider", "emailServiceProvider", "string"),
+    smtp,
+    imap,
   };
+  if (req.fromName !== undefined) body.fromName = req.fromName;
+  return trulyinboxRequest("POST", "/email-accounts", body);
 }
