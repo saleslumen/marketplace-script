@@ -9,7 +9,7 @@
   "marketplace": {
     "permissions": {
       "saleslumenScopes": [],
-      "storage": ["INSTALLATION"],
+      "storage": [],
       "externalDomains": ["https://api.browserbase.com"]
     },
     "connections": [
@@ -21,15 +21,6 @@
         "displayLabel": "Browserbase",
         "helpText": "Paste the Browserbase API key. The app sends it as the X-BB-API-Key header."
       }
-    ],
-    "configuration": {
-      "fields": [
-        {
-          "key": "projectId",
-          "type": "string",
-          "required": false
-        }
-      ]
-    }
+    ]
   }
 }
