@@ -60,12 +60,12 @@ Required inputs have no suffix. Optional inputs end with `?`.
 | --- | --- | --- |
 | `listMailboxes` | GET /v2/mailboxes/list | page?, limit?, contains?, x-workspace-key?, serviceProvider? |
 | `getMailbox` | GET /v2/mailboxes | id, x-workspace-key?, serviceProvider? |
-| `assignMailboxes` | POST /v2/mailboxes | x-workspace-key?, serviceProvider?, domain id keys mapping to mailbox arrays |
+| `assignMailboxes` | POST /v2/mailboxes | x-workspace-key?, serviceProvider?, body |
 | `updateMailbox` | PUT /v2/mailboxes | x-workspace-key?, serviceProvider?, mailboxData |
 | `scheduleMailboxRemoval` | PUT /v2/mailboxes/scheduled-removal | x-workspace-key?, serviceProvider?, remove, status?, contains?, domainIds |
 | `getMailboxAuthenticatorCode` | GET /v2/mailboxes/authenticator-code | mailboxId?, domainId?, x-workspace-key?, serviceProvider? |
 | `createCustomOAuth` | POST /v2/mailboxes/custom-oauth | x-workspace-key?, serviceProvider?, google?, microsoft? |
-| `scheduleMailboxCreation` | POST /v2/mailboxes/schedule (deprecated) | serviceProvider, domain id keys mapping to mailbox arrays |
+| `scheduleMailboxCreation` | POST /v2/mailboxes/schedule (deprecated) | serviceProvider, body |
 | `retryFailedMailboxes` | PUT /v2/mailboxes/retry-failed | serviceProvider, domainIds |
 
 ### payments & wallet

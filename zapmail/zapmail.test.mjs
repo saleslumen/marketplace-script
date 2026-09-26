@@ -174,19 +174,20 @@ test("mailbox, oauth, export, and subscription operations pass documented fields
   assert.equal(script.calls[2].headers["x-service-provider"], undefined);
   await script.api.getMailbox({ id: "mb-1", serviceProvider: "GOOGLE" });
   assert.equal(script.calls[3].url, `${base}/v2/mailboxes?id=mb-1`);
+  const assigned = {
+    "dom-1": [{ firstName: "Ada", lastName: "Lovelace", mailboxUsername: "ada", domainName: "example.com", password: "secret-password" }],
+  };
   await script.api.assignMailboxes({
     "x-workspace-key": "ws-1",
     serviceProvider: "GOOGLE",
-    "dom-1": [{ firstName: "Ada", lastName: "Lovelace", mailboxUsername: "ada", domainName: "example.com", password: "secret-password" }],
     extra: true,
+    body: assigned,
   });
   assert.equal(script.calls[4].method, "POST");
   assert.equal(script.calls[4].url, `${base}/v2/mailboxes`);
+  assert.equal(script.calls[4].headers["x-workspace-key"], "ws-1");
   assert.equal(script.calls[4].headers["x-service-provider"], "GOOGLE");
-  assert.deepEqual(JSON.parse(script.calls[4].payload), {
-    "dom-1": [{ firstName: "Ada", lastName: "Lovelace", mailboxUsername: "ada", domainName: "example.com", password: "secret-password" }],
-    extra: true,
-  });
+  assert.equal(script.calls[4].payload, JSON.stringify(assigned));
   const oauth = {
     google: { appName: "App", clientId: "client", mailboxesPerDomain: { "dom-1": [{ mailboxId: "mb-1", oauthLink: "https://example.com/oauth" }] } },
     microsoft: { mailboxesPerDomain: { "dom-1": [{ mailboxId: "mb-2", oauthLink: "https://example.com/ms" }] } },
@@ -229,6 +230,12 @@ test("mailbox, oauth, export, and subscription operations pass documented fields
   assert.equal(script.calls[12].headers["x-workspace-key"], "ws-1");
   assert.deepEqual(JSON.parse(script.calls[12].payload), [{ name: "Production", tagColor: "#FF5733" }]);
   assert.equal(script.calls[12].payload.includes("ws-1"), false);
+  const scheduled = { "dom-2": [{ domainName: "example.com", mailboxUsername: "ada", firstName: "Ada", lastName: "Lovelace" }] };
+  await script.api.scheduleMailboxCreation({ serviceProvider: "GOOGLE", body: scheduled });
+  assert.equal(script.calls[13].method, "POST");
+  assert.equal(script.calls[13].url, `${base}/v2/mailboxes/schedule`);
+  assert.equal(script.calls[13].headers["x-service-provider"], "GOOGLE");
+  assert.equal(script.calls[13].payload, JSON.stringify(scheduled));
 });
 
 test("remaining resource groups encode method, path, and headers", async () => {
@@ -317,6 +324,9 @@ test("validation errors and non-2xx errors use the Zapmail message", async () =>
   await assert.rejects(() => script.api.retryFailedMailboxes({ domainIds: ["dom-1"] }), /ZAPMAIL_INVALID_INPUT: serviceProvider must be GOOGLE or MICROSOFT/);
   await assert.rejects(() => script.api.createDomainTags({ name: "Production" }), /ZAPMAIL_INVALID_INPUT: request body must be an array/);
   await assert.rejects(() => script.api.getZapSite({ id: "site-1", serviceProvider: "GOOGLE" }), /ZAPMAIL_INVALID_INPUT: x-workspace-key is required/);
+  await assert.rejects(() => script.api.assignMailboxes({ serviceProvider: "GOOGLE" }), /ZAPMAIL_INVALID_INPUT: body is required/);
+  await assert.rejects(() => script.api.assignMailboxes({ serviceProvider: "GOOGLE", body: [] }), /ZAPMAIL_INVALID_INPUT: body is required/);
+  await assert.rejects(() => script.api.scheduleMailboxCreation({ serviceProvider: "GOOGLE" }), /ZAPMAIL_INVALID_INPUT: body is required/);
   assert.equal(script.calls.length, 0);
   const failed = loadScript(() => ({ status: 403, body: { status: 403, message: "bad vault-zapmail-key token", errorId: "e1" } }));
   await assert.rejects(() => failed.api.getUser({}), (error) => {
