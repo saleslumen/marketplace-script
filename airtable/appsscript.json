@@ -9,8 +9,8 @@
   "marketplace": {
     "permissions": {
       "saleslumenScopes": [],
-      "storage": ["USER"],
-      "externalDomains": ["https://api.airtable.com"]
+      "storage": [],
+      "externalDomains": ["https://api.airtable.com", "https://content.airtable.com"]
     },
     "connections": [
       {
