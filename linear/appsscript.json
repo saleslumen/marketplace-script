@@ -21,15 +21,6 @@
         "displayLabel": "Linear",
         "helpText": "Paste the Linear personal API key from Settings, API. The app sends it as the Authorization header."
       }
-    ],
-    "configuration": {
-      "fields": [
-        {
-          "key": "teamId",
-          "type": "string",
-          "required": false
-        }
-      ]
-    }
+    ]
   }
 }
