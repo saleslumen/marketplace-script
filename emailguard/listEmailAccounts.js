@@ -1,7 +1,8 @@
 /**
- * @description List email accounts for the authenticated workspace.
- * @returns {Object}
+ * @description List Email Accounts. GET /api/v1/email-accounts.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listEmailAccounts() {
-  return runAuthed("/api/v1/email-accounts", "GET", undefined, "EMAIL_ACCOUNTS", "EMAIL_ACCOUNTS_FAILED");
+  return emailguardRequest("/api/v1/email-accounts", "GET");
 }

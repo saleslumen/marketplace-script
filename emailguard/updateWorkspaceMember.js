@@ -1,17 +1,17 @@
 /**
- * @description Update a workspace member role.
+ * @description Update Workspace Member. PUT /api/v1/workspaces/members/{user_id}.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.user_id
+ * @param {string} input.role
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: user_id is required when user_id is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: role is required when role is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function updateWorkspaceMember(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const user_id = asString(firstPresent(req, ["user_id", "userId"]));
-  if (!user_id) return missingInput("user_id");
-  const role = asString(firstPresent(req, ["role"]));
-  if (!role) return missingInput("role");
-  let path = "/api/v1/workspaces/members/{user_id}";
-  path = path.replace("{user_id}", encodeURIComponent(user_id));
+  const req = inputObject(input);
+  const user_id = requireText(req, "user_id");
   const body = {};
-  body.role = role;
-  return runAuthed(path, "PUT", body, "MEMBER_UPDATED", "MEMBER_UPDATE_FAILED");
+  body.role = requireText(req, "role");
+  return emailguardRequest(`/api/v1/workspaces/members/${encodeURIComponent(user_id)}`, "PUT", body);
 }

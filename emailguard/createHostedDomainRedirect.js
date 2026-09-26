@@ -1,16 +1,17 @@
 /**
- * @description Create a hosted domain redirect.
+ * @description Create Hosted Domain Redirect. POST /api/v1/hosted-domain-redirects.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain
+ * @param {string} input.redirect
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain is required when domain is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: redirect is required when redirect is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createHostedDomainRedirect(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain = asString(firstPresent(req, ["domain"]));
-  if (!domain) return missingInput("domain");
-  const redirect = asString(firstPresent(req, ["redirect"]));
-  if (!redirect) return missingInput("redirect");
+  const req = inputObject(input);
   const body = {};
-  body.domain = domain;
-  body.redirect = redirect;
-  return runAuthed("/api/v1/hosted-domain-redirects", "POST", body, "HOSTED_DOMAIN_REDIRECT_CREATED", "HOSTED_DOMAIN_REDIRECT_CREATE_FAILED");
+  body.domain = requireText(req, "domain");
+  body.redirect = requireText(req, "redirect");
+  return emailguardRequest("/api/v1/hosted-domain-redirects", "POST", body);
 }

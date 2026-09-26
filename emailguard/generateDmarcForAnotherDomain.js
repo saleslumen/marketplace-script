@@ -1,19 +1,20 @@
 /**
- * @description Generate a DMARC record for another domain with a specified reporting address.
+ * @description Generate DMARC for Another Domain. POST /api/v1/email-authentication/dmarc-another-domain.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain
+ * @param {string} input.policy
+ * @param {string} input.rua
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain is required when domain is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: policy is required when policy is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: rua is required when rua is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function generateDmarcForAnotherDomain(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain = asString(firstPresent(req, ["domain"]));
-  if (!domain) return missingInput("domain");
-  const policy = asString(firstPresent(req, ["policy"]));
-  if (!policy) return missingInput("policy");
-  const rua = asString(firstPresent(req, ["rua"]));
-  if (!rua) return missingInput("rua");
+  const req = inputObject(input);
   const body = {};
-  body.domain = domain;
-  body.policy = policy;
-  body.rua = rua;
-  return runAuthed("/api/v1/email-authentication/dmarc-another-domain", "POST", body, "DMARC_ANOTHER", "DMARC_ANOTHER_FAILED");
+  body.domain = requireText(req, "domain");
+  body.policy = requireText(req, "policy");
+  body.rua = requireText(req, "rua");
+  return emailguardRequest("/api/v1/email-authentication/dmarc-another-domain", "POST", body);
 }

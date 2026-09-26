@@ -1,7 +1,8 @@
 /**
- * @description List Spamhaus domain sender checks.
- * @returns {Object}
+ * @description List Domain Sender Checks. GET /api/v1/spamhaus-intelligence/domain-senders.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listDomainSenderChecks() {
-  return runAuthed("/api/v1/spamhaus-intelligence/domain-senders", "GET", undefined, "DOMAIN_SENDER_CHECKS", "DOMAIN_SENDER_CHECKS_FAILED");
+  return emailguardRequest("/api/v1/spamhaus-intelligence/domain-senders", "GET");
 }

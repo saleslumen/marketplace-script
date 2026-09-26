@@ -1,13 +1,14 @@
 /**
- * @description Create an ad-hoc blacklist check for a domain or IPv4 address.
+ * @description Create Ad-Hoc Blacklist Check. POST /api/v1/blacklist-checks/ad-hoc.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain_or_ip
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain_or_ip is required when domain_or_ip is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createAdHocBlacklistCheck(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain_or_ip = asString(firstPresent(req, ["domain_or_ip", "domainOrIp"]));
-  if (!domain_or_ip) return missingInput("domain_or_ip");
+  const req = inputObject(input);
   const body = {};
-  body.domain_or_ip = domain_or_ip;
-  return runAuthed("/api/v1/blacklist-checks/ad-hoc", "POST", body, "BLACKLIST_CHECK_CREATED", "BLACKLIST_CHECK_CREATE_FAILED");
+  body.domain_or_ip = requireText(req, "domain_or_ip");
+  return emailguardRequest("/api/v1/blacklist-checks/ad-hoc", "POST", body);
 }

@@ -1,7 +1,8 @@
 /**
- * @description List domain blacklist checks.
- * @returns {Object}
+ * @description List Domain Blacklists. GET /api/v1/blacklist-checks/domains.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listDomainBlacklists() {
-  return runAuthed("/api/v1/blacklist-checks/domains", "GET", undefined, "DOMAIN_BLACKLISTS", "DOMAIN_BLACKLISTS_FAILED");
+  return emailguardRequest("/api/v1/blacklist-checks/domains", "GET");
 }

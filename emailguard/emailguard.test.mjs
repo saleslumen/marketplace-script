@@ -12,7 +12,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/login",
     "auth": false,
-    "success": "LOGIN",
     "pathParams": [],
     "requiredBody": [
       "email",
@@ -22,11 +21,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getUser",
+    "fn": "accountDetails",
     "method": "GET",
     "path": "/api/v1/user",
     "auth": true,
-    "success": "USER",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -37,7 +35,6 @@ const OPERATIONS = [
     "method": "PUT",
     "path": "/api/v1/user/profile",
     "auth": true,
-    "success": "PROFILE_UPDATED",
     "pathParams": [],
     "requiredBody": [
       "name"
@@ -50,7 +47,6 @@ const OPERATIONS = [
     "method": "PUT",
     "path": "/api/v1/user/password",
     "auth": true,
-    "success": "PASSWORD_UPDATED",
     "pathParams": [],
     "requiredBody": [
       "current_password",
@@ -65,18 +61,16 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/user/logout",
     "auth": true,
-    "success": "LOGGED_OUT",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
     "multipart": false
   },
   {
-    "fn": "listWorkspaces",
+    "fn": "userWorkspaces",
     "method": "GET",
     "path": "/api/v1/workspaces",
     "auth": true,
-    "success": "WORKSPACES",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -87,7 +81,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/workspaces",
     "auth": true,
-    "success": "WORKSPACE_CREATED",
     "pathParams": [],
     "requiredBody": [
       "name"
@@ -96,11 +89,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getCurrentWorkspace",
+    "fn": "workspaceDetails",
     "method": "GET",
     "path": "/api/v1/workspaces/current",
     "auth": true,
-    "success": "CURRENT_WORKSPACE",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -111,7 +103,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/workspaces/switch-workspace",
     "auth": true,
-    "success": "WORKSPACE_SWITCHED",
     "pathParams": [],
     "requiredBody": [
       "uuid"
@@ -124,7 +115,6 @@ const OPERATIONS = [
     "method": "PUT",
     "path": "/api/v1/workspaces/{team_id}",
     "auth": true,
-    "success": "WORKSPACE_UPDATED",
     "pathParams": [
       "team_id"
     ],
@@ -135,11 +125,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "inviteWorkspaceMember",
+    "fn": "inviteTeamMember",
     "method": "POST",
     "path": "/api/v1/workspaces/invite-members",
     "auth": true,
-    "success": "MEMBER_INVITED",
     "pathParams": [],
     "requiredBody": [
       "email",
@@ -153,7 +142,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/workspaces/accept/{team_invitation_uuid}",
     "auth": true,
-    "success": "INVITATION_ACCEPTED",
     "pathParams": [
       "team_invitation_uuid"
     ],
@@ -166,7 +154,6 @@ const OPERATIONS = [
     "method": "PUT",
     "path": "/api/v1/workspaces/members/{user_id}",
     "auth": true,
-    "success": "MEMBER_UPDATED",
     "pathParams": [
       "user_id"
     ],
@@ -181,7 +168,6 @@ const OPERATIONS = [
     "method": "DELETE",
     "path": "/api/v1/workspaces/members/{user_id}",
     "auth": true,
-    "success": "MEMBER_DELETED",
     "pathParams": [
       "user_id"
     ],
@@ -194,7 +180,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/domains",
     "auth": true,
-    "success": "DOMAINS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -205,7 +190,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/domains",
     "auth": true,
-    "success": "DOMAIN_CREATED",
     "pathParams": [],
     "requiredBody": [
       "name"
@@ -214,11 +198,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getDomain",
+    "fn": "showDomainDetails",
     "method": "GET",
     "path": "/api/v1/domains/{uuid}",
     "auth": true,
-    "success": "DOMAIN",
     "pathParams": [
       "uuid"
     ],
@@ -227,11 +210,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "updateDomainSpfRecords",
+    "fn": "updateSpfRecords",
     "method": "PATCH",
     "path": "/api/v1/domains/spf-record/{domain_uuid}",
     "auth": true,
-    "success": "SPF_UPDATED",
     "pathParams": [
       "domain_uuid"
     ],
@@ -240,11 +222,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "updateDomainDkimRecords",
+    "fn": "updateDkimRecords",
     "method": "PATCH",
     "path": "/api/v1/domains/dkim-records/{domain_uuid}",
     "auth": true,
-    "success": "DKIM_UPDATED",
     "pathParams": [
       "domain_uuid"
     ],
@@ -255,11 +236,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "updateDomainDmarcRecord",
+    "fn": "updateDmarcRecord",
     "method": "PATCH",
     "path": "/api/v1/domains/dmarc-record/{domain_uuid}",
     "auth": true,
-    "success": "DMARC_UPDATED",
     "pathParams": [
       "domain_uuid"
     ],
@@ -272,7 +252,6 @@ const OPERATIONS = [
     "method": "DELETE",
     "path": "/api/v1/domains/delete/{domain_uuid}",
     "auth": true,
-    "success": "DOMAIN_DELETED",
     "pathParams": [
       "domain_uuid"
     ],
@@ -285,18 +264,16 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/email-accounts",
     "auth": true,
-    "success": "EMAIL_ACCOUNTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
     "multipart": false
   },
   {
-    "fn": "getEmailAccount",
+    "fn": "showEmailAccountDetails",
     "method": "GET",
     "path": "/api/v1/email-accounts/{id}",
     "auth": true,
-    "success": "EMAIL_ACCOUNT",
     "pathParams": [
       "id"
     ],
@@ -309,7 +286,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/email-accounts/imap-smtp",
     "auth": true,
-    "success": "EMAIL_ACCOUNT_CREATED",
     "pathParams": [],
     "requiredBody": [
       "name",
@@ -334,7 +310,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/email-accounts/test-imap-connection",
     "auth": true,
-    "success": "IMAP_TESTED",
     "pathParams": [],
     "requiredBody": [
       "imap_username",
@@ -352,7 +327,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/email-accounts/test-smtp-connection",
     "auth": true,
-    "success": "SMTP_TESTED",
     "pathParams": [],
     "requiredBody": [
       "smtp_username",
@@ -369,7 +343,6 @@ const OPERATIONS = [
     "method": "DELETE",
     "path": "/api/v1/email-accounts/delete/{email_account_uuid}",
     "auth": true,
-    "success": "EMAIL_ACCOUNT_DELETED",
     "pathParams": [
       "email_account_uuid"
     ],
@@ -382,7 +355,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/email-accounts/reputation-builder-accounts/random",
     "auth": true,
-    "success": "REPUTATION_BUILDER_ACCOUNT",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -393,7 +365,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/contact-verification",
     "auth": true,
-    "success": "CONTACT_LISTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -404,7 +375,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/contact-verification",
     "auth": true,
-    "success": "CONTACT_VERIFICATION_CREATED",
     "pathParams": [],
     "requiredBody": [
       "csv",
@@ -414,11 +384,10 @@ const OPERATIONS = [
     "multipart": true
   },
   {
-    "fn": "getContactList",
+    "fn": "showContactListDetails",
     "method": "GET",
     "path": "/api/v1/contact-verification/show/{contact_list_uuid}",
     "auth": true,
-    "success": "CONTACT_LIST",
     "pathParams": [
       "contact_list_uuid"
     ],
@@ -431,7 +400,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/contact-verification/download/{contact_list_uuid}",
     "auth": true,
-    "success": "CONTACT_LIST_DOWNLOADED",
     "pathParams": [
       "contact_list_uuid"
     ],
@@ -444,7 +412,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/blacklist-checks/domains",
     "auth": true,
-    "success": "DOMAIN_BLACKLISTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -455,7 +422,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/blacklist-checks/email-accounts",
     "auth": true,
-    "success": "EMAIL_ACCOUNT_BLACKLISTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -466,7 +432,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/blacklist-checks/ad-hoc",
     "auth": true,
-    "success": "BLACKLIST_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain_or_ip"
@@ -475,11 +440,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getBlacklistCheck",
+    "fn": "showBlacklistCheckDetails",
     "method": "GET",
     "path": "/api/v1/blacklist-checks/{id}",
     "auth": true,
-    "success": "BLACKLIST_CHECK",
     "pathParams": [
       "id"
     ],
@@ -492,7 +456,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/dmarc-reports",
     "auth": true,
-    "success": "DMARC_REPORT_DOMAINS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -503,7 +466,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/dmarc-reports/domains/{domain_uuid}/insights",
     "auth": true,
-    "success": "DMARC_STATISTICS",
     "pathParams": [
       "domain_uuid"
     ],
@@ -520,7 +482,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/dmarc-reports/domains/{domain_uuid}/dmarc-sources",
     "auth": true,
-    "success": "DMARC_SOURCES",
     "pathParams": [
       "domain_uuid"
     ],
@@ -537,7 +498,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/dmarc-reports/domains/{domain_uuid}/dmarc-failures",
     "auth": true,
-    "success": "DMARC_FAILURES",
     "pathParams": [
       "domain_uuid"
     ],
@@ -550,11 +510,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "lookupSpf",
+    "fn": "spfLookup",
     "method": "GET",
     "path": "/api/v1/email-authentication/spf-lookup",
     "auth": true,
-    "success": "SPF_LOOKUP",
     "pathParams": [],
     "requiredBody": [],
     "queryParams": [
@@ -564,11 +523,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "generateSpfWizard",
+    "fn": "spfGeneratorWizard",
     "method": "POST",
     "path": "/api/v1/email-authentication/spf-generator-wizard",
     "auth": true,
-    "success": "SPF_WIZARD",
     "pathParams": [],
     "requiredBody": [
       "providers"
@@ -577,11 +535,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "generateSpfRaw",
+    "fn": "spfRawGenerator",
     "method": "POST",
     "path": "/api/v1/email-authentication/spf-raw-generator",
     "auth": true,
-    "success": "SPF_RAW",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [
@@ -594,11 +551,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "lookupDkim",
+    "fn": "dkimLookup",
     "method": "GET",
     "path": "/api/v1/email-authentication/dkim-lookup",
     "auth": true,
-    "success": "DKIM_LOOKUP",
     "pathParams": [],
     "requiredBody": [],
     "queryParams": [
@@ -609,11 +565,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "generateDkimRaw",
+    "fn": "dkimRawGenerator",
     "method": "POST",
     "path": "/api/v1/email-authentication/dkim-raw-generator",
     "auth": true,
-    "success": "DKIM_RAW",
     "pathParams": [],
     "requiredBody": [
       "keyLength"
@@ -622,11 +577,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "lookupDmarc",
+    "fn": "dmarcLookup",
     "method": "GET",
     "path": "/api/v1/email-authentication/dmarc-lookup",
     "auth": true,
-    "success": "DMARC_LOOKUP",
     "pathParams": [],
     "requiredBody": [],
     "queryParams": [
@@ -640,7 +594,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/email-authentication/dmarc-connected-domain",
     "auth": true,
-    "success": "DMARC_CONNECTED",
     "pathParams": [],
     "requiredBody": [
       "domain_uuid",
@@ -654,7 +607,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/email-authentication/dmarc-another-domain",
     "auth": true,
-    "success": "DMARC_ANOTHER",
     "pathParams": [],
     "requiredBody": [
       "domain",
@@ -669,7 +621,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/content-spam-check",
     "auth": true,
-    "success": "CONTENT_SPAM_CHECKED",
     "pathParams": [],
     "requiredBody": [
       "content"
@@ -678,11 +629,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getHostedDomainRedirectIp",
+    "fn": "ipOfHostedDomainRedirect",
     "method": "GET",
     "path": "/api/v1/hosted-domain-redirects/ip",
     "auth": true,
-    "success": "HOSTED_DOMAIN_REDIRECT_IP",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -693,7 +643,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/hosted-domain-redirects",
     "auth": true,
-    "success": "HOSTED_DOMAIN_REDIRECTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -704,7 +653,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/hosted-domain-redirects",
     "auth": true,
-    "success": "HOSTED_DOMAIN_REDIRECT_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain",
@@ -714,11 +662,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getHostedDomainRedirect",
+    "fn": "showHostedDomainRedirect",
     "method": "GET",
     "path": "/api/v1/hosted-domain-redirects/{id}",
     "auth": true,
-    "success": "HOSTED_DOMAIN_REDIRECT",
     "pathParams": [
       "id"
     ],
@@ -731,7 +678,6 @@ const OPERATIONS = [
     "method": "DELETE",
     "path": "/api/v1/hosted-domain-redirects/{hosted_domain_redirect_uuid}",
     "auth": true,
-    "success": "HOSTED_DOMAIN_REDIRECT_DELETED",
     "pathParams": [
       "hosted_domain_redirect_uuid"
     ],
@@ -740,11 +686,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "lookupDomainHost",
+    "fn": "domainHostLookup",
     "method": "POST",
     "path": "/api/v1/domain-host-lookup",
     "auth": true,
-    "success": "DOMAIN_HOST",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -753,11 +698,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getDomainMaskingProxyIp",
+    "fn": "ipOfDomainMaskingProxy",
     "method": "GET",
     "path": "/api/v1/domain-masking-proxies/ip",
     "auth": true,
-    "success": "DOMAIN_MASKING_PROXY_IP",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -768,7 +712,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/domain-masking-proxies",
     "auth": true,
-    "success": "DOMAIN_MASKING_PROXIES",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -779,7 +722,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/domain-masking-proxies",
     "auth": true,
-    "success": "DOMAIN_MASKING_PROXY_CREATED",
     "pathParams": [],
     "requiredBody": [
       "masking_domain",
@@ -789,11 +731,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getDomainMaskingProxy",
+    "fn": "showDomainMaskingProxy",
     "method": "GET",
     "path": "/api/v1/domain-masking-proxies/{hosted_domain_redirect_uuid}",
     "auth": true,
-    "success": "DOMAIN_MASKING_PROXY",
     "pathParams": [
       "hosted_domain_redirect_uuid"
     ],
@@ -806,7 +747,6 @@ const OPERATIONS = [
     "method": "DELETE",
     "path": "/api/v1/domain-masking-proxies/{hosted_domain_redirect_uuid}",
     "auth": true,
-    "success": "DOMAIN_MASKING_PROXY_DELETED",
     "pathParams": [
       "hosted_domain_redirect_uuid"
     ],
@@ -815,11 +755,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "lookupEmailHost",
+    "fn": "emailHostLookup",
     "method": "POST",
     "path": "/api/v1/email-host-lookup",
     "auth": true,
-    "success": "EMAIL_HOST",
     "pathParams": [],
     "requiredBody": [
       "email"
@@ -832,7 +771,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/inbox-placement-tests",
     "auth": true,
-    "success": "INBOX_PLACEMENT_TESTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -843,7 +781,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/inbox-placement-tests",
     "auth": true,
-    "success": "INBOX_PLACEMENT_TEST_CREATED",
     "pathParams": [],
     "requiredBody": [
       "name"
@@ -852,11 +789,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getInboxPlacementTest",
+    "fn": "showInboxPlacementTest",
     "method": "GET",
     "path": "/api/v1/inbox-placement-tests/{id}",
     "auth": true,
-    "success": "INBOX_PLACEMENT_TEST",
     "pathParams": [
       "id"
     ],
@@ -869,18 +805,16 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/surbl-blacklist-checks/domains",
     "auth": true,
-    "success": "SURBL_BLACKLISTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
     "multipart": false
   },
   {
-    "fn": "getSurblBlacklistCheck",
+    "fn": "showSurblBlacklistCheck",
     "method": "GET",
     "path": "/api/v1/surbl-blacklist-checks/{surblBlacklistCheck_uuid}",
     "auth": true,
-    "success": "SURBL_BLACKLIST_CHECK",
     "pathParams": [
       "surblBlacklistCheck_uuid"
     ],
@@ -893,7 +827,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/surbl-blacklist-checks",
     "auth": true,
-    "success": "SURBL_BLACKLIST_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -906,7 +839,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/spam-filter-tests",
     "auth": true,
-    "success": "SPAM_FILTER_TESTS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -917,7 +849,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/spam-filter-tests",
     "auth": true,
-    "success": "SPAM_FILTER_TEST_CREATED",
     "pathParams": [],
     "requiredBody": [
       "name"
@@ -926,11 +857,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getSpamFilterTest",
+    "fn": "showSpamFilterTestDetails",
     "method": "GET",
     "path": "/api/v1/spam-filter-tests/{email_test_uuid}",
     "auth": true,
-    "success": "SPAM_FILTER_TEST",
     "pathParams": [
       "email_test_uuid"
     ],
@@ -943,7 +873,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/a-record-reputation",
     "auth": true,
-    "success": "A_RECORD_REPUTATION_CHECKS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -954,7 +883,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/spamhaus-intelligence/a-record-reputation/create",
     "auth": true,
-    "success": "A_RECORD_REPUTATION_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -963,11 +891,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getARecordReputationCheck",
+    "fn": "showARecordReputationCheck",
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/a-record-reputation/{spamhausARecordReputationCheck_uuid}",
     "auth": true,
-    "success": "A_RECORD_REPUTATION_CHECK",
     "pathParams": [
       "spamhausARecordReputationCheck_uuid"
     ],
@@ -980,7 +907,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/domain-contexts",
     "auth": true,
-    "success": "DOMAIN_CONTEXT_CHECKS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -991,7 +917,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/spamhaus-intelligence/domain-contexts/create",
     "auth": true,
-    "success": "DOMAIN_CONTEXT_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -1000,11 +925,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getDomainContextCheck",
+    "fn": "showDomainContextCheck",
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/domain-contexts/{spamhausDomainContextCheck_uuid}",
     "auth": true,
-    "success": "DOMAIN_CONTEXT_CHECK",
     "pathParams": [
       "spamhausDomainContextCheck_uuid"
     ],
@@ -1017,7 +941,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/domain-reputation",
     "auth": true,
-    "success": "DOMAIN_REPUTATION_CHECKS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -1028,7 +951,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/spamhaus-intelligence/domain-reputation/create",
     "auth": true,
-    "success": "DOMAIN_REPUTATION_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -1037,11 +959,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getDomainReputationCheck",
+    "fn": "showDomainReputationCheck",
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/domain-reputation/{spamhausDomainReputationCheck_uuid}",
     "auth": true,
-    "success": "DOMAIN_REPUTATION_CHECK",
     "pathParams": [
       "spamhausDomainReputationCheck_uuid"
     ],
@@ -1054,7 +975,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/domain-senders",
     "auth": true,
-    "success": "DOMAIN_SENDER_CHECKS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -1065,7 +985,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/spamhaus-intelligence/domain-senders/create",
     "auth": true,
-    "success": "DOMAIN_SENDER_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -1074,11 +993,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getDomainSenderCheck",
+    "fn": "showDomainSenderCheck",
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/domain-senders/{spamhausDomainSenderCheck_uuid}",
     "auth": true,
-    "success": "DOMAIN_SENDER_CHECK",
     "pathParams": [
       "spamhausDomainSenderCheck_uuid"
     ],
@@ -1091,7 +1009,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/nameserver-reputation",
     "auth": true,
-    "success": "NAMESERVER_REPUTATION_CHECKS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -1102,7 +1019,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/spamhaus-intelligence/nameserver-reputation/create",
     "auth": true,
-    "success": "NAMESERVER_REPUTATION_CHECK_CREATED",
     "pathParams": [],
     "requiredBody": [
       "domain"
@@ -1111,11 +1027,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getNameserverReputationCheck",
+    "fn": "showNameserverReputationCheck",
     "method": "GET",
     "path": "/api/v1/spamhaus-intelligence/nameserver-reputation/{spamhausNsReputationCheck_uuid}",
     "auth": true,
-    "success": "NAMESERVER_REPUTATION_CHECK",
     "pathParams": [
       "spamhausNsReputationCheck_uuid"
     ],
@@ -1128,7 +1043,6 @@ const OPERATIONS = [
     "method": "GET",
     "path": "/api/v1/tags",
     "auth": true,
-    "success": "TAGS",
     "pathParams": [],
     "requiredBody": [],
     "optionalBody": [],
@@ -1139,7 +1053,6 @@ const OPERATIONS = [
     "method": "POST",
     "path": "/api/v1/tags",
     "auth": true,
-    "success": "TAG_CREATED",
     "pathParams": [],
     "requiredBody": [
       "name",
@@ -1149,11 +1062,10 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "getTag",
+    "fn": "showTag",
     "method": "GET",
     "path": "/api/v1/tags/{uuid}",
     "auth": true,
-    "success": "TAG",
     "pathParams": [
       "uuid"
     ],
@@ -1166,7 +1078,6 @@ const OPERATIONS = [
     "method": "DELETE",
     "path": "/api/v1/tags/{tag_uuid}",
     "auth": true,
-    "success": "TAG_DELETED",
     "pathParams": [
       "tag_uuid"
     ],
@@ -1216,6 +1127,7 @@ const loadScript = ({ handler } = {}) => {
   return { api: context, calls };
 };
 const lastCall = (calls) => calls[calls.length - 1];
+const sameJson = (actual, expected) => assert.equal(JSON.stringify(actual), JSON.stringify(expected));
 const pathOf = (url) => String(url).replace("https://app.emailguard.io", "");
 const sampleField = (name) => {
   if (name === "provider" || name === "keyLength") return 2048;
@@ -1258,9 +1170,7 @@ test("documented methods and paths are called without live network", async () =>
   for (const op of OPERATIONS) {
     const started = calls.length;
     const result = await api[op.fn](sampleInput(op));
-    assert.equal(result.ok, true, `${op.fn} should succeed`);
-    assert.equal(result.outcome, op.success, `${op.fn} outcome`);
-    assert.equal(result.retryable, false);
+    assert.equal(JSON.stringify(result), JSON.stringify({ data: { ok: true } }), `${op.fn} returns the EmailGuard body`);
     const call = lastCall(calls);
     assert.equal(calls.length, started + 1, `${op.fn} one HTTP call`);
     assert.equal(call.method, op.method, `${op.fn} method`);
@@ -1280,8 +1190,8 @@ test("documented methods and paths are called without live network", async () =>
 
 test("Bearer header is sent and the vault token is not returned", async () => {
   const { api, calls } = loadScript();
-  const user = await api.getUser();
-  assert.equal(user.ok, true);
+  const user = await api.accountDetails();
+  sameJson(user, { data: { ok: true } });
   assert.equal(lastCall(calls).hasBearer, true);
   assert.equal(lastCall(calls).bearerToken, "vault-key-secret");
   assert.equal(JSON.stringify(user).includes("vault-key-secret"), false);
@@ -1325,61 +1235,97 @@ test("inbox placement create and get use documented paths and unique-phrase fiel
     },
   });
   const created = await api.createInboxPlacementTest({ name: "sample" });
-  assert.equal(created.ok, true);
-  assert.equal(created.outcome, "INBOX_PLACEMENT_TEST_CREATED");
   assert.equal(created.data.filter_phrase, "egipt_uniquePhrase");
   assert.equal(created.data.comma_separated_test_email_addresses, "jake@emailguardalpha.com,cody@emailguardalpha.com");
   assert.equal(lastCall(calls).method, "POST");
   assert.equal(pathOf(lastCall(calls).url), "/api/v1/inbox-placement-tests");
   assert.deepEqual(lastCall(calls).payload, { name: "sample" });
   const listed = await api.listInboxPlacementTests();
-  assert.equal(listed.ok, true);
+  sameJson(listed, { data: [] });
   assert.equal(lastCall(calls).method, "GET");
   assert.equal(pathOf(lastCall(calls).url), "/api/v1/inbox-placement-tests");
-  const shown = await api.getInboxPlacementTest({ id: "test-1" });
-  assert.equal(shown.ok, true);
+  const shown = await api.showInboxPlacementTest({ id: "test-1" });
   assert.equal(shown.data.filter_phrase, "egipt_uniquePhrase");
   assert.equal(lastCall(calls).method, "GET");
   assert.equal(pathOf(lastCall(calls).url), "/api/v1/inbox-placement-tests/test-1");
 });
 
-test("401 is unauthorized and 429 is retryable", async () => {
+test("HTTP failures throw EMAILGUARD_REQUEST_FAILED", async () => {
   const { api } = loadScript({
     handler: ({ url }) => {
       if (url.endsWith("/api/v1/user")) return { status: 401, body: { message: "Unauthenticated." } };
       return { status: 429, body: { message: "Too many requests" } };
     },
   });
-  const unauthorized = await api.getUser();
-  assert.equal(unauthorized.ok, false);
-  assert.equal(unauthorized.outcome, "UNAUTHORIZED");
-  assert.equal(unauthorized.retryable, false);
-  assert.equal(unauthorized.status, 401);
-  const limited = await api.listInboxPlacementTests();
-  assert.equal(limited.ok, false);
-  assert.equal(limited.outcome, "RATE_LIMITED");
-  assert.equal(limited.retryable, true);
-  assert.equal(limited.status, 429);
+  await assert.rejects(() => api.accountDetails(), (error) => {
+    assert.equal(error.message, "EMAILGUARD_REQUEST_FAILED: 401 Unauthenticated.");
+    return true;
+  });
+  await assert.rejects(() => api.listInboxPlacementTests(), (error) => {
+    assert.equal(error.message, "EMAILGUARD_REQUEST_FAILED: 429 Too many requests");
+    return true;
+  });
 });
 
-test("classifiedResult keeps the script envelope over a colliding vendor body", async () => {
-  const { api } = loadScript({
+test("EMAILGUARD_REQUEST_FAILED redacts the bearer token and passwords and clips the message", async () => {
+  const { api, calls } = loadScript({
+    handler: () => ({
+      status: 422,
+      body: { message: `password secret-imap token vault-key-secret Bearer vault-key-secret ${"y".repeat(600)}` },
+    }),
+  });
+  await assert.rejects(() => api.testImapConnection({
+    imap_username: "user@example.com",
+    imap_password: "secret-imap",
+    imap_host: "imap.example.com",
+    imap_port: "993",
+  }), (error) => {
+    assert.equal(error.message.includes("secret-imap"), false);
+    assert.equal(error.message.includes("vault-key-secret"), false);
+    assert.match(error.message, /^EMAILGUARD_REQUEST_FAILED: 422 password \[redacted\] token \[redacted\] Bearer \[redacted\] /);
+    assert.equal(error.message.slice("EMAILGUARD_REQUEST_FAILED: 422 ".length).length, 500);
+    return true;
+  });
+  assert.equal(calls.length, 1);
+});
+
+test("the EmailGuard response body is returned unchanged", async () => {
+  const { api, calls } = loadScript({
     handler: () => ({
       status: 200,
       body: { ok: false, outcome: "nope", data: { filter_phrase: "egipt_x" } },
     }),
   });
   const created = await api.createInboxPlacementTest({ name: "sample" });
-  assert.equal(created.ok, true);
-  assert.equal(created.outcome, "INBOX_PLACEMENT_TEST_CREATED");
-  assert.equal(created.retryable, false);
-  assert.equal(created.failure, "");
+  assert.equal(created.ok, false);
+  assert.equal(created.outcome, "nope");
   assert.equal(created.data.filter_phrase, "egipt_x");
-  assert.equal(created.data.ok, undefined);
-  assert.equal(created.data.outcome, undefined);
+  assert.equal(calls.length, 1);
 });
 
-test("login and SMTP/IMAP functions never return passwords", async () => {
+test("only documented field names are accepted", async () => {
+  const { api, calls } = loadScript();
+  await assert.rejects(() => api.showDomainDetails({ domain_uuid: "id-1" }), /EMAILGUARD_INVALID_INPUT: uuid is required/);
+  await assert.rejects(() => api.spfGeneratorWizard({ providers: "google,outlook" }), /EMAILGUARD_INVALID_INPUT: providers must be an array/);
+  await assert.rejects(() => api.spfRawGenerator({ redirect: "yes" }), /EMAILGUARD_INVALID_INPUT: redirect must be a boolean/);
+  assert.equal(calls.length, 0);
+  const raw = await api.spfRawGenerator({ redirect: false, failure_policy: "softfail" });
+  sameJson(raw, { data: { ok: true } });
+  assert.deepEqual(lastCall(calls).payload, { redirect: false, failure_policy: "softfail" });
+  const wizard = await api.spfGeneratorWizard({ providers: ["google"] });
+  sameJson(wizard, { data: { ok: true } });
+  assert.deepEqual(lastCall(calls).payload, { providers: ["google"] });
+});
+
+test("non-JSON success text is returned unchanged", async () => {
+  const { api } = loadScript({
+    handler: () => ({ status: 200, body: "email,status\nuser@example.com,valid\n" }),
+  });
+  const downloaded = await api.downloadContactList({ contact_list_uuid: "id-1" });
+  assert.equal(downloaded, "email,status\nuser@example.com,valid\n");
+});
+
+test("login and mailbox calls send credentials and return the EmailGuard body", async () => {
   const { api, calls } = loadScript({
     handler: ({ url }) => {
       if (url.endsWith("/api/v1/login")) {
@@ -1389,10 +1335,9 @@ test("login and SMTP/IMAP functions never return passwords", async () => {
     },
   });
   const loggedIn = await api.login({ email: "user@example.com", password: "login-password-secret" });
-  assert.equal(loggedIn.ok, true);
-  assert.equal(loggedIn.data.token, "5|returned-login-token");
+  sameJson(loggedIn, { data: { token: "5|returned-login-token", password: "echo-password" } });
   assert.equal(JSON.stringify(loggedIn).includes("login-password-secret"), false);
-  assert.equal(JSON.stringify(loggedIn).includes("echo-password"), false);
+  assert.equal(JSON.stringify(loggedIn).includes("vault-key-secret"), false);
   assert.equal(lastCall(calls).hasBearer, false);
   assert.deepEqual(lastCall(calls).payload, { email: "user@example.com", password: "login-password-secret" });
   const created = await api.createImapSmtpEmailAccount({
@@ -1408,11 +1353,9 @@ test("login and SMTP/IMAP functions never return passwords", async () => {
     smtp_port: "587",
     smtp_tls: "true",
   });
-  assert.equal(created.ok, true);
+  sameJson(created, { data: { connected: true, imap_password: "echo-imap", smtp_password: "echo-smtp" } });
   assert.equal(JSON.stringify(created).includes("secret-imap"), false);
   assert.equal(JSON.stringify(created).includes("secret-smtp"), false);
-  assert.equal(created.data.imap_password, undefined);
-  assert.equal(created.data.smtp_password, undefined);
   assert.deepEqual(lastCall(calls).payload.imap_password, "secret-imap");
   const imap = await api.testImapConnection({
     imap_username: "user@example.com",
@@ -1420,6 +1363,7 @@ test("login and SMTP/IMAP functions never return passwords", async () => {
     imap_host: "imap.example.com",
     imap_port: "993",
   });
+  sameJson(imap, { data: { connected: true, imap_password: "echo-imap", smtp_password: "echo-smtp" } });
   assert.equal(JSON.stringify(imap).includes("secret-imap"), false);
   const smtp = await api.testSmtpConnection({
     smtp_username: "user@example.com",
@@ -1436,4 +1380,9 @@ test("login and SMTP/IMAP functions never return passwords", async () => {
   });
   assert.equal(JSON.stringify(updated).includes("old-secret"), false);
   assert.equal(JSON.stringify(updated).includes("new-secret"), false);
+  assert.deepEqual(lastCall(calls).payload, {
+    current_password: "old-secret",
+    password: "new-secret",
+    password_confirmation: "new-secret",
+  });
 });

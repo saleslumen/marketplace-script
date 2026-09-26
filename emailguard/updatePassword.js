@@ -1,19 +1,20 @@
 /**
- * @description Update the authenticated user's password. Never returns or persists passwords.
+ * @description Update Password. PUT /api/v1/user/password.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.current_password
+ * @param {string} input.password
+ * @param {string} input.password_confirmation
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: current_password is required when current_password is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: password is required when password is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: password_confirmation is required when password_confirmation is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function updatePassword(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const current_password = asString(firstPresent(req, ["current_password", "currentPassword"]));
-  if (!current_password) return missingInput("current_password");
-  const password = asString(firstPresent(req, ["password"]));
-  if (!password) return missingInput("password");
-  const password_confirmation = asString(firstPresent(req, ["password_confirmation", "passwordConfirmation"]));
-  if (!password_confirmation) return missingInput("password_confirmation");
+  const req = inputObject(input);
   const body = {};
-  body.current_password = current_password;
-  body.password = password;
-  body.password_confirmation = password_confirmation;
-  return runAuthed("/api/v1/user/password", "PUT", body, "PASSWORD_UPDATED", "PASSWORD_UPDATE_FAILED");
+  body.current_password = requireText(req, "current_password");
+  body.password = requireText(req, "password");
+  body.password_confirmation = requireText(req, "password_confirmation");
+  return emailguardRequest("/api/v1/user/password", "PUT", body);
 }

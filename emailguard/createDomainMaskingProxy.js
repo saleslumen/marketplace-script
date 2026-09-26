@@ -1,16 +1,17 @@
 /**
- * @description Create a domain masking proxy.
+ * @description Create Domain Masking Proxy. POST /api/v1/domain-masking-proxies.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.masking_domain
+ * @param {string} input.primary_domain
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: masking_domain is required when masking_domain is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: primary_domain is required when primary_domain is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createDomainMaskingProxy(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const masking_domain = asString(firstPresent(req, ["masking_domain", "maskingDomain"]));
-  if (!masking_domain) return missingInput("masking_domain");
-  const primary_domain = asString(firstPresent(req, ["primary_domain", "primaryDomain"]));
-  if (!primary_domain) return missingInput("primary_domain");
+  const req = inputObject(input);
   const body = {};
-  body.masking_domain = masking_domain;
-  body.primary_domain = primary_domain;
-  return runAuthed("/api/v1/domain-masking-proxies", "POST", body, "DOMAIN_MASKING_PROXY_CREATED", "DOMAIN_MASKING_PROXY_CREATE_FAILED");
+  body.masking_domain = requireText(req, "masking_domain");
+  body.primary_domain = requireText(req, "primary_domain");
+  return emailguardRequest("/api/v1/domain-masking-proxies", "POST", body);
 }

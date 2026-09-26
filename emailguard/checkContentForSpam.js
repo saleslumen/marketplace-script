@@ -1,13 +1,14 @@
 /**
- * @description Check content for spam and return the documented spam score and words.
+ * @description Check Content for Spam. POST /api/v1/content-spam-check.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.content
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: content is required when content is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function checkContentForSpam(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const content = asString(firstPresent(req, ["content"]));
-  if (!content) return missingInput("content");
+  const req = inputObject(input);
   const body = {};
-  body.content = content;
-  return runAuthed("/api/v1/content-spam-check", "POST", body, "CONTENT_SPAM_CHECKED", "CONTENT_SPAM_CHECK_FAILED");
+  body.content = requireText(req, "content");
+  return emailguardRequest("/api/v1/content-spam-check", "POST", body);
 }

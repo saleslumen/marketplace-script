@@ -1,13 +1,14 @@
 /**
- * @description Queue a Spamhaus nameserver reputation check. Poll getNameserverReputationCheck for results.
+ * @description Create Nameserver Reputation Check. POST /api/v1/spamhaus-intelligence/nameserver-reputation/create.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain is required when domain is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createNameserverReputationCheck(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain = asString(firstPresent(req, ["domain"]));
-  if (!domain) return missingInput("domain");
+  const req = inputObject(input);
   const body = {};
-  body.domain = domain;
-  return runAuthed("/api/v1/spamhaus-intelligence/nameserver-reputation/create", "POST", body, "NAMESERVER_REPUTATION_CHECK_CREATED", "NAMESERVER_REPUTATION_CHECK_CREATE_FAILED");
+  body.domain = requireText(req, "domain");
+  return emailguardRequest("/api/v1/spamhaus-intelligence/nameserver-reputation/create", "POST", body);
 }

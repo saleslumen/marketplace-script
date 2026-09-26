@@ -1,7 +1,8 @@
 /**
- * @description List SURBL blacklist checks for domains.
- * @returns {Object}
+ * @description List SURBL Blacklists. GET /api/v1/surbl-blacklist-checks/domains.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listSurblBlacklists() {
-  return runAuthed("/api/v1/surbl-blacklist-checks/domains", "GET", undefined, "SURBL_BLACKLISTS", "SURBL_BLACKLISTS_FAILED");
+  return emailguardRequest("/api/v1/surbl-blacklist-checks/domains", "GET");
 }

@@ -1,13 +1,13 @@
 /**
- * @description Delete a tag. Permanent.
+ * @description Delete tag. DELETE /api/v1/tags/{tag_uuid}.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.tag_uuid
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: tag_uuid is required when tag_uuid is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function deleteTag(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const tag_uuid = asString(firstPresent(req, ["tag_uuid", "tagUuid", "uuid", "id"]));
-  if (!tag_uuid) return missingInput("tag_uuid");
-  let path = "/api/v1/tags/{tag_uuid}";
-  path = path.replace("{tag_uuid}", encodeURIComponent(tag_uuid));
-  return runAuthed(path, "DELETE", undefined, "TAG_DELETED", "TAG_DELETE_FAILED");
+  const req = inputObject(input);
+  const tag_uuid = requireText(req, "tag_uuid");
+  return emailguardRequest(`/api/v1/tags/${encodeURIComponent(tag_uuid)}`, "DELETE");
 }

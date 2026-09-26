@@ -1,13 +1,13 @@
 /**
- * @description Delete a hosted domain redirect.
+ * @description Delete Hosted Domain Redirect. DELETE /api/v1/hosted-domain-redirects/{hosted_domain_redirect_uuid}.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.hosted_domain_redirect_uuid
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: hosted_domain_redirect_uuid is required when hosted_domain_redirect_uuid is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function deleteHostedDomainRedirect(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const hosted_domain_redirect_uuid = asString(firstPresent(req, ["hosted_domain_redirect_uuid", "hostedDomainRedirectUuid", "id", "uuid"]));
-  if (!hosted_domain_redirect_uuid) return missingInput("hosted_domain_redirect_uuid");
-  let path = "/api/v1/hosted-domain-redirects/{hosted_domain_redirect_uuid}";
-  path = path.replace("{hosted_domain_redirect_uuid}", encodeURIComponent(hosted_domain_redirect_uuid));
-  return runAuthed(path, "DELETE", undefined, "HOSTED_DOMAIN_REDIRECT_DELETED", "HOSTED_DOMAIN_REDIRECT_DELETE_FAILED");
+  const req = inputObject(input);
+  const hosted_domain_redirect_uuid = requireText(req, "hosted_domain_redirect_uuid");
+  return emailguardRequest(`/api/v1/hosted-domain-redirects/${encodeURIComponent(hosted_domain_redirect_uuid)}`, "DELETE");
 }

@@ -1,25 +1,26 @@
 /**
- * @description Test SMTP credentials. Never returns the password.
+ * @description Test SMTP Connection. POST /api/v1/email-accounts/test-smtp-connection.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.smtp_username
+ * @param {string} input.smtp_password
+ * @param {string} input.smtp_host
+ * @param {string} input.smtp_port
+ * @param {string} input.smtp_tls
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: smtp_username is required when smtp_username is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: smtp_password is required when smtp_password is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: smtp_host is required when smtp_host is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: smtp_port is required when smtp_port is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: smtp_tls is required when smtp_tls is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function testSmtpConnection(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const smtp_username = asString(firstPresent(req, ["smtp_username", "smtpUsername"]));
-  if (!smtp_username) return missingInput("smtp_username");
-  const smtp_password = asString(firstPresent(req, ["smtp_password", "smtpPassword"]));
-  if (!smtp_password) return missingInput("smtp_password");
-  const smtp_host = asString(firstPresent(req, ["smtp_host", "smtpHost"]));
-  if (!smtp_host) return missingInput("smtp_host");
-  const smtp_port = asString(firstPresent(req, ["smtp_port", "smtpPort"]));
-  if (!smtp_port) return missingInput("smtp_port");
-  const smtp_tls = asString(firstPresent(req, ["smtp_tls", "smtpTls"]));
-  if (!smtp_tls) return missingInput("smtp_tls");
+  const req = inputObject(input);
   const body = {};
-  body.smtp_username = smtp_username;
-  body.smtp_password = smtp_password;
-  body.smtp_host = smtp_host;
-  body.smtp_port = smtp_port;
-  body.smtp_tls = smtp_tls;
-  return runAuthed("/api/v1/email-accounts/test-smtp-connection", "POST", body, "SMTP_TESTED", "SMTP_TEST_FAILED");
+  body.smtp_username = requireText(req, "smtp_username");
+  body.smtp_password = requireText(req, "smtp_password");
+  body.smtp_host = requireText(req, "smtp_host");
+  body.smtp_port = requireText(req, "smtp_port");
+  body.smtp_tls = requireText(req, "smtp_tls");
+  return emailguardRequest("/api/v1/email-accounts/test-smtp-connection", "POST", body);
 }

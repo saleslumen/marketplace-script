@@ -1,13 +1,14 @@
 /**
- * @description Create a domain.
+ * @description Create Domain. POST /api/v1/domains.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.name
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: name is required when name is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createDomain(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const name = asString(firstPresent(req, ["name"]));
-  if (!name) return missingInput("name");
+  const req = inputObject(input);
   const body = {};
-  body.name = name;
-  return runAuthed("/api/v1/domains", "POST", body, "DOMAIN_CREATED", "DOMAIN_CREATE_FAILED");
+  body.name = requireText(req, "name");
+  return emailguardRequest("/api/v1/domains", "POST", body);
 }

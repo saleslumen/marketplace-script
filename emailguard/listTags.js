@@ -1,7 +1,8 @@
 /**
- * @description List tags for the authenticated user.
- * @returns {Object}
+ * @description List tags. GET /api/v1/tags.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listTags() {
-  return runAuthed("/api/v1/tags", "GET", undefined, "TAGS", "TAGS_FAILED");
+  return emailguardRequest("/api/v1/tags", "GET");
 }

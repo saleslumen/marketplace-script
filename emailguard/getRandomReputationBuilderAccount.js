@@ -1,7 +1,8 @@
 /**
- * @description Get a random reputation-builder email account.
- * @returns {Object}
+ * @description Get a random reputation-builder email account. GET /api/v1/email-accounts/reputation-builder-accounts/random.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function getRandomReputationBuilderAccount() {
-  return runAuthed("/api/v1/email-accounts/reputation-builder-accounts/random", "GET", undefined, "REPUTATION_BUILDER_ACCOUNT", "REPUTATION_BUILDER_ACCOUNT_FAILED");
+  return emailguardRequest("/api/v1/email-accounts/reputation-builder-accounts/random", "GET");
 }

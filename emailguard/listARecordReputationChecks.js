@@ -1,7 +1,8 @@
 /**
- * @description List Spamhaus A-record reputation checks.
- * @returns {Object}
+ * @description List A Record Reputation Checks. GET /api/v1/spamhaus-intelligence/a-record-reputation.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listARecordReputationChecks() {
-  return runAuthed("/api/v1/spamhaus-intelligence/a-record-reputation", "GET", undefined, "A_RECORD_REPUTATION_CHECKS", "A_RECORD_REPUTATION_CHECKS_FAILED");
+  return emailguardRequest("/api/v1/spamhaus-intelligence/a-record-reputation", "GET");
 }

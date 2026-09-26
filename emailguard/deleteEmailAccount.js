@@ -1,13 +1,13 @@
 /**
- * @description Delete an IMAP/SMTP email account.
+ * @description Delete Email Account. DELETE /api/v1/email-accounts/delete/{email_account_uuid}.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.email_account_uuid
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: email_account_uuid is required when email_account_uuid is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function deleteEmailAccount(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const email_account_uuid = asString(firstPresent(req, ["email_account_uuid", "emailAccountUuid", "id", "uuid"]));
-  if (!email_account_uuid) return missingInput("email_account_uuid");
-  let path = "/api/v1/email-accounts/delete/{email_account_uuid}";
-  path = path.replace("{email_account_uuid}", encodeURIComponent(email_account_uuid));
-  return runAuthed(path, "DELETE", undefined, "EMAIL_ACCOUNT_DELETED", "EMAIL_ACCOUNT_DELETE_FAILED");
+  const req = inputObject(input);
+  const email_account_uuid = requireText(req, "email_account_uuid");
+  return emailguardRequest(`/api/v1/email-accounts/delete/${encodeURIComponent(email_account_uuid)}`, "DELETE");
 }

@@ -1,13 +1,13 @@
 /**
- * @description Delete a domain.
+ * @description Delete Domain. DELETE /api/v1/domains/delete/{domain_uuid}.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain_uuid
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain_uuid is required when domain_uuid is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function deleteDomain(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain_uuid = asString(firstPresent(req, ["domain_uuid", "domainUuid", "uuid"]));
-  if (!domain_uuid) return missingInput("domain_uuid");
-  let path = "/api/v1/domains/delete/{domain_uuid}";
-  path = path.replace("{domain_uuid}", encodeURIComponent(domain_uuid));
-  return runAuthed(path, "DELETE", undefined, "DOMAIN_DELETED", "DOMAIN_DELETE_FAILED");
+  const req = inputObject(input);
+  const domain_uuid = requireText(req, "domain_uuid");
+  return emailguardRequest(`/api/v1/domains/delete/${encodeURIComponent(domain_uuid)}`, "DELETE");
 }

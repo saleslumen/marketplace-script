@@ -1,20 +1,20 @@
 /**
- * @description Get DMARC report statistics for a domain between two dates.
+ * @description Get DMARC Report Statistics. GET /api/v1/dmarc-reports/domains/{domain_uuid}/insights.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain_uuid
+ * @param {string} input.start_date
+ * @param {string} input.end_date
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain_uuid is required when domain_uuid is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: start_date is required when start_date is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: end_date is required when end_date is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function getDmarcReportStatistics(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain_uuid = asString(firstPresent(req, ["domain_uuid", "domainUuid", "uuid"]));
-  if (!domain_uuid) return missingInput("domain_uuid");
-  const start_date = asString(firstPresent(req, ["start_date", "startDate"]));
-  if (!start_date) return missingInput("start_date");
-  const end_date = asString(firstPresent(req, ["end_date", "endDate"]));
-  if (!end_date) return missingInput("end_date");
-  let path = "/api/v1/dmarc-reports/domains/{domain_uuid}/insights";
-  path = path.replace("{domain_uuid}", encodeURIComponent(domain_uuid));
-  const body = {};
-  body.start_date = start_date;
-  body.end_date = end_date;
-  return runAuthed(path, "GET", body, "DMARC_STATISTICS", "DMARC_STATISTICS_FAILED");
+  const req = inputObject(input);
+  const domain_uuid = requireText(req, "domain_uuid");
+  const query = {};
+  query.start_date = requireText(req, "start_date");
+  query.end_date = requireText(req, "end_date");
+  return emailguardRequest(`/api/v1/dmarc-reports/domains/${encodeURIComponent(domain_uuid)}/insights`, "GET", query);
 }

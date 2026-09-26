@@ -1,7 +1,8 @@
 /**
- * @description List hosted domain redirects for the authenticated workspace.
- * @returns {Object}
+ * @description List Hosted Domain Redirects. GET /api/v1/hosted-domain-redirects.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listHostedDomainRedirects() {
-  return runAuthed("/api/v1/hosted-domain-redirects", "GET", undefined, "HOSTED_DOMAIN_REDIRECTS", "HOSTED_DOMAIN_REDIRECTS_FAILED");
+  return emailguardRequest("/api/v1/hosted-domain-redirects", "GET");
 }

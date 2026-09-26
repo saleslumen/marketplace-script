@@ -1,7 +1,8 @@
 /**
- * @description List Spamhaus domain context checks.
- * @returns {Object}
+ * @description List Domain Context Checks. GET /api/v1/spamhaus-intelligence/domain-contexts.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listDomainContextChecks() {
-  return runAuthed("/api/v1/spamhaus-intelligence/domain-contexts", "GET", undefined, "DOMAIN_CONTEXT_CHECKS", "DOMAIN_CONTEXT_CHECKS_FAILED");
+  return emailguardRequest("/api/v1/spamhaus-intelligence/domain-contexts", "GET");
 }

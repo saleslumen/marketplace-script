@@ -1,16 +1,17 @@
 /**
- * @description Create a tag.
+ * @description Create tag. POST /api/v1/tags.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.name
+ * @param {string} input.color
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: name is required when name is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: color is required when color is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createTag(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const name = asString(firstPresent(req, ["name"]));
-  if (!name) return missingInput("name");
-  const color = asString(firstPresent(req, ["color"]));
-  if (!color) return missingInput("color");
+  const req = inputObject(input);
   const body = {};
-  body.name = name;
-  body.color = color;
-  return runAuthed("/api/v1/tags", "POST", body, "TAG_CREATED", "TAG_CREATE_FAILED");
+  body.name = requireText(req, "name");
+  body.color = requireText(req, "color");
+  return emailguardRequest("/api/v1/tags", "POST", body);
 }

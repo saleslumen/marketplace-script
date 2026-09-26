@@ -1,24 +1,26 @@
 /**
- * @description Test IMAP credentials. Never returns the password.
+ * @description Test IMAP Connection. POST /api/v1/email-accounts/test-imap-connection.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.imap_username
+ * @param {string} input.imap_password
+ * @param {string} input.imap_host
+ * @param {string} input.imap_port
+ * @param {string} [input.imap_tls]
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: imap_username is required when imap_username is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: imap_password is required when imap_password is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: imap_host is required when imap_host is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: imap_port is required when imap_port is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function testImapConnection(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const imap_username = asString(firstPresent(req, ["imap_username", "imapUsername"]));
-  if (!imap_username) return missingInput("imap_username");
-  const imap_password = asString(firstPresent(req, ["imap_password", "imapPassword"]));
-  if (!imap_password) return missingInput("imap_password");
-  const imap_host = asString(firstPresent(req, ["imap_host", "imapHost"]));
-  if (!imap_host) return missingInput("imap_host");
-  const imap_port = asString(firstPresent(req, ["imap_port", "imapPort"]));
-  if (!imap_port) return missingInput("imap_port");
-  const imap_tls = asString(firstPresent(req, ["imap_tls", "imapTls"]));
+  const req = inputObject(input);
   const body = {};
-  body.imap_username = imap_username;
-  body.imap_password = imap_password;
-  body.imap_host = imap_host;
-  body.imap_port = imap_port;
-  if (imap_tls) body.imap_tls = imap_tls;
-  return runAuthed("/api/v1/email-accounts/test-imap-connection", "POST", body, "IMAP_TESTED", "IMAP_TEST_FAILED");
+  body.imap_username = requireText(req, "imap_username");
+  body.imap_password = requireText(req, "imap_password");
+  body.imap_host = requireText(req, "imap_host");
+  body.imap_port = requireText(req, "imap_port");
+  const imap_tls = optionalText(req, "imap_tls");
+  if (imap_tls !== undefined) body.imap_tls = imap_tls;
+  return emailguardRequest("/api/v1/email-accounts/test-imap-connection", "POST", body);
 }

@@ -1,13 +1,13 @@
 /**
- * @description Remove a workspace member.
+ * @description Delete Workspace Member. DELETE /api/v1/workspaces/members/{user_id}.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.user_id
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: user_id is required when user_id is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function deleteWorkspaceMember(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const user_id = asString(firstPresent(req, ["user_id", "userId"]));
-  if (!user_id) return missingInput("user_id");
-  let path = "/api/v1/workspaces/members/{user_id}";
-  path = path.replace("{user_id}", encodeURIComponent(user_id));
-  return runAuthed(path, "DELETE", undefined, "MEMBER_DELETED", "MEMBER_DELETE_FAILED");
+  const req = inputObject(input);
+  const user_id = requireText(req, "user_id");
+  return emailguardRequest(`/api/v1/workspaces/members/${encodeURIComponent(user_id)}`, "DELETE");
 }

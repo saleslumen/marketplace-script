@@ -1,13 +1,14 @@
 /**
- * @description Update the authenticated user's profile name.
+ * @description Update Profile. PUT /api/v1/user/profile.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.name
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: name is required when name is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function updateProfile(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const name = asString(firstPresent(req, ["name"]));
-  if (!name) return missingInput("name");
+  const req = inputObject(input);
   const body = {};
-  body.name = name;
-  return runAuthed("/api/v1/user/profile", "PUT", body, "PROFILE_UPDATED", "PROFILE_UPDATE_FAILED");
+  body.name = requireText(req, "name");
+  return emailguardRequest("/api/v1/user/profile", "PUT", body);
 }

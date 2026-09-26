@@ -1,17 +1,19 @@
 /**
- * @description Create a contact verification from a CSV that includes an email field.
+ * @description Create Contact Verification. POST /api/v1/contact-verification.
  * @param {Object} input
- * @returns {Object}
+ * @param {string|Object} input.csv
+ * @param {string} input.name
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: csv is required when csv is missing
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: name is required when name is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createContactVerification(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const csvRaw = firstPresent(req, ["csv"]);
-  const csv = csvRaw && typeof csvRaw === "object" && Object.prototype.hasOwnProperty.call(csvRaw, "content") ? csvRaw : (asString(csvRaw) ? { content: asString(csvRaw), filename: "contacts.csv" } : undefined);
-  if (!csv || !asString(csv.content)) return missingInput("csv");
-  const name = asString(firstPresent(req, ["name"]));
-  if (!name) return missingInput("name");
+  const req = inputObject(input);
+  const csv = csvPart(req.csv);
+  if (!csv || !asString(csv.content)) invalid("csv is required");
   const body = {};
   body.csv = csv;
-  body.name = name;
-  return classifiedResult(classifyHttp(await emailguardRequestRaw("/api/v1/contact-verification", "POST", body, { auth: true, multipart: true })), "CONTACT_VERIFICATION_CREATED", "CONTACT_VERIFICATION_CREATE_FAILED");
+  body.name = requireText(req, "name");
+  return emailguardRequest("/api/v1/contact-verification", "POST", body, { multipart: true });
 }

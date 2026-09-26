@@ -1,7 +1,8 @@
 /**
- * @description List domain masking proxies for the authenticated workspace.
- * @returns {Object}
+ * @description List Domain Masking Proxies. GET /api/v1/domain-masking-proxies.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listDomainMaskingProxies() {
-  return runAuthed("/api/v1/domain-masking-proxies", "GET", undefined, "DOMAIN_MASKING_PROXIES", "DOMAIN_MASKING_PROXIES_FAILED");
+  return emailguardRequest("/api/v1/domain-masking-proxies", "GET");
 }

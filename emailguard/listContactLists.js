@@ -1,7 +1,8 @@
 /**
- * @description List contact verification lists.
- * @returns {Object}
+ * @description List Contact Lists. GET /api/v1/contact-verification.
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function listContactLists() {
-  return runAuthed("/api/v1/contact-verification", "GET", undefined, "CONTACT_LISTS", "CONTACT_LISTS_FAILED");
+  return emailguardRequest("/api/v1/contact-verification", "GET");
 }

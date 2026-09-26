@@ -1,13 +1,14 @@
 /**
- * @description Create a SURBL blacklist check for a domain.
+ * @description Create SURBL Blacklist Check. POST /api/v1/surbl-blacklist-checks.
  * @param {Object} input
- * @returns {Object}
+ * @param {string} input.domain
+ * @returns {Object} EmailGuard response body
+ * @throws {Error} EMAILGUARD_INVALID_INPUT: domain is required when domain is missing
+ * @throws {Error} EMAILGUARD_REQUEST_FAILED: <status> <message> when EmailGuard rejects the request
  */
 async function createSurblBlacklistCheck(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const domain = asString(firstPresent(req, ["domain"]));
-  if (!domain) return missingInput("domain");
+  const req = inputObject(input);
   const body = {};
-  body.domain = domain;
-  return runAuthed("/api/v1/surbl-blacklist-checks", "POST", body, "SURBL_BLACKLIST_CHECK_CREATED", "SURBL_BLACKLIST_CHECK_CREATE_FAILED");
+  body.domain = requireText(req, "domain");
+  return emailguardRequest("/api/v1/surbl-blacklist-checks", "POST", body);
 }
