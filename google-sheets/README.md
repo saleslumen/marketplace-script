@@ -1,6 +1,6 @@
 # Google Sheets
 
-Google Sheets operations for a Saleslumen Marketplace app. Each operation is one function. `http.js` is shared request code.
+Google Sheets API v4 for a Saleslumen Marketplace app. Each operation is one documented method on `spreadsheets`, `spreadsheets.values`, `spreadsheets.sheets`, or `spreadsheets.developerMetadata`. Arguments use the Sheets parameter names. The return value is the Sheets response body. `http.js` is shared request code.
 
 ## Connection
 
@@ -34,18 +34,32 @@ Additional authorization parameters:
 
 ## Configuration
 
-This app has no installation settings. Spreadsheet id and range are operation arguments.
+This app has no installation settings. Spreadsheet id and the other method parameters are operation arguments.
 
 ## Operations
 
 | Operation | What it does |
 | --- | --- |
-| `getSpreadsheet` | Read the spreadsheet id, title, locale, time zone, and sheet list. |
-| `getValues` | Read one range. |
-| `updateValues` | Write rows to one range. |
-| `appendValues` | Append rows to a table. |
-| `clearValues` | Clear one range. |
-| `batchGetValues` | Read 1 to 50 ranges. |
-| `batchUpdateValues` | Write 1 to 50 ranges. |
+| `spreadsheetsBatchUpdate` | Apply one or more updates to a spreadsheet. |
+| `spreadsheetsCreate` | Create a spreadsheet. |
+| `spreadsheetsGet` | Return the spreadsheet at the given id. |
+| `spreadsheetsGetByDataFilter` | Return the spreadsheet subsets that match the data filters. |
+| `spreadsheetsDeveloperMetadataGet` | Return the developer metadata with the given metadata id. |
+| `spreadsheetsDeveloperMetadataSearch` | Return developer metadata matching the data filters. |
+| `spreadsheetsSheetsCopyTo` | Copy one sheet to another spreadsheet. |
+| `spreadsheetsValuesAppend` | Append values to a spreadsheet. |
+| `spreadsheetsValuesBatchClear` | Clear one or more ranges of values. |
+| `spreadsheetsValuesBatchClearByDataFilter` | Clear ranges matched by data filters. |
+| `spreadsheetsValuesBatchGet` | Return one or more ranges of values. |
+| `spreadsheetsValuesBatchGetByDataFilter` | Return ranges of values matched by data filters. |
+| `spreadsheetsValuesBatchUpdate` | Set values in one or more ranges. |
+| `spreadsheetsValuesBatchUpdateByDataFilter` | Set values in ranges matched by data filters. |
+| `spreadsheetsValuesClear` | Clear values from one range. |
+| `spreadsheetsValuesGet` | Return one range of values. |
+| `spreadsheetsValuesUpdate` | Set values in one range. |
 
 The JSDoc on each function is the parameter and error contract.
+
+## Errors
+
+Invalid input throws `SHEETS_INVALID_INPUT: <reason>`. A non-2xx Sheets response throws `SHEETS_REQUEST_FAILED (<status>): <message>` when Sheets sends an error message, or `SHEETS_REQUEST_FAILED (<status>)` when it does not. An unreadable body throws `SHEETS_INVALID_RESPONSE: expected JSON`. The access token is not included in these errors.
