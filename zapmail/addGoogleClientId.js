@@ -1,21 +1,22 @@
 /**
- * @description Ask Zapmail to add Saleslumen's Google OAuth Client ID to domains.
+ * @description Add Google Client ID to Domain. POST /v2/domains/add-client-id.
  * @param {Object} input
- * @param {string} input.workspaceId
- * @param {string|string[]} input.domainIds
+ * @param {string} [input.x-workspace-key]
+ * @param {"GOOGLE"|"MICROSOFT"} [input.serviceProvider]
+ * @param {Array} input.domainIds
  * @param {string} input.clientId
  * @param {string} input.app
+ * @returns {Object|string} Zapmail response body
+ * @throws {Error} ZAPMAIL_INVALID_INPUT: <reason> when a required input is missing or invalid
+ * @throws {Error} ZAPMAIL_REQUEST_FAILED: <status> <message> when Zapmail returns a non-2xx status
  */
 async function addGoogleClientId(input) {
-  const req = input && typeof input === "object" ? input : {};
-  const workspaceId = asString(req.workspaceId);
-  const domainIds = asCsvList(req.domainIds);
-  const clientId = asString(req.clientId);
-  const app = asString(req.app || req.appName);
-  if (!workspaceId) throw new Error("ZAPMAIL_REQUEST_FAILED: workspaceId is required");
-  if (!domainIds.length) throw new Error("ZAPMAIL_REQUEST_FAILED: domainIds is required");
-  if (!clientId) throw new Error("ZAPMAIL_REQUEST_FAILED: clientId is required");
-  if (!app) throw new Error("ZAPMAIL_REQUEST_FAILED: app is required");
-  const response = await zapmailRequest("/v2/domains/add-client-id", "POST", { domainIds, clientId, app }, workspaceId);
-  return { ok: true, message: asString(response.message) };
+  const req = inputObject(input);
+  const serviceProvider = readServiceProvider(req, false);
+  const workspaceKey = readHeader(req, "x-workspace-key", false);
+  requireField(req, "domainIds", "array");
+  requireField(req, "clientId", "string");
+  requireField(req, "app", "string");
+  const body = omit(req, ["serviceProvider", "x-workspace-key", "x-workspace-id"]);
+  return zapmailRequest("/v2/domains/add-client-id", "POST", { serviceProvider, workspaceKey, body });
 }
