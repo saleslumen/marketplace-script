@@ -1,7 +1,7 @@
 /**
- * @description Create a chat completion. POST /api/v1/chat/completions. `stream: true` is rejected.
+ * @description Create a preset from a chat-completions request body. POST /api/v1/presets/{slug}/chat/completions. `stream: true` is rejected.
  * @param {Object} input
- * @param {string} [input.X-OpenRouter-Metadata]
+ * @param {string} input.slug
  * @param {Object} [input.cache_control]
  * @param {Object} [input.debug]
  * @param {number|null} [input.frequency_penalty]
@@ -47,18 +47,19 @@
  * @returns {Object} OpenRouter response body
  * @throws {Error} OPENROUTER_INVALID_INPUT: <reason>
  * @throws {Error} OPENROUTER_REQUEST_FAILED: <status> <message>
- * @see https://openrouter.ai/docs/api/api-reference/chat/create-a-chat-completion
+ * @see https://openrouter.ai/docs/api/api-reference/presets/create-a-preset-from-a-chat-completions-request-body
  */
-async function chatCompletions(input) {
+async function createPresetsChatCompletions(input) {
   return openrouterOperation(input, {
   "method": "POST",
-  "path": "/chat/completions",
+  "path": "/presets/{slug}/chat/completions",
   "rejectStream": true,
   "encoding": "json",
-  "headers": [
+  "pathParams": [
     {
-      "name": "X-OpenRouter-Metadata",
-      "type": "string"
+      "name": "slug",
+      "type": "string",
+      "required": true
     }
   ],
   "required": [
