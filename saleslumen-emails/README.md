@@ -42,6 +42,8 @@ This app has no installation settings. Path, query, and body fields are operatio
 | `getAccount` | Get one email account. |
 | `updateAccount` | Update an email account. |
 | `deleteAccount` | Delete an email account. |
+| `pauseAccount` | Pause one email account. The body is an empty object. |
+| `resumeAccount` | Resume one email account. The body is an empty object. |
 | `batchCreateAccounts` | Create email accounts in one batch. |
 | `createOauthConnection` | Create an OAuth connection. |
 | `getOauthConnection` | Get an OAuth connection. |
