@@ -77,9 +77,6 @@ This app has no installation settings.
 | `showDomainMaskingProxy` | Get one domain masking proxy. |
 | `deleteDomainMaskingProxy` | Delete a domain masking proxy. |
 | `emailHostLookup` | Look up the email host or corporate spam filter for an email address. |
-| `listInboxPlacementTests` | List inbox placement tests. |
-| `createInboxPlacementTest` | Create an inbox placement test by name. |
-| `showInboxPlacementTest` | Get one inbox placement test, including filter_phrase and seed test email addresses. |
 | `listSurblBlacklists` | List SURBL blacklist checks for domains. |
 | `showSurblBlacklistCheck` | Get one SURBL blacklist check. |
 | `createSurblBlacklistCheck` | Create a SURBL blacklist check for a domain. |

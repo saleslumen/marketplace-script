@@ -767,40 +767,6 @@ const OPERATIONS = [
     "multipart": false
   },
   {
-    "fn": "listInboxPlacementTests",
-    "method": "GET",
-    "path": "/api/v1/inbox-placement-tests",
-    "auth": true,
-    "pathParams": [],
-    "requiredBody": [],
-    "optionalBody": [],
-    "multipart": false
-  },
-  {
-    "fn": "createInboxPlacementTest",
-    "method": "POST",
-    "path": "/api/v1/inbox-placement-tests",
-    "auth": true,
-    "pathParams": [],
-    "requiredBody": [
-      "name"
-    ],
-    "optionalBody": [],
-    "multipart": false
-  },
-  {
-    "fn": "showInboxPlacementTest",
-    "method": "GET",
-    "path": "/api/v1/inbox-placement-tests/{id}",
-    "auth": true,
-    "pathParams": [
-      "id"
-    ],
-    "requiredBody": [],
-    "optionalBody": [],
-    "multipart": false
-  },
-  {
     "fn": "listSurblBlacklists",
     "method": "GET",
     "path": "/api/v1/surbl-blacklist-checks/domains",
@@ -1185,7 +1151,7 @@ test("documented methods and paths are called without live network", async () =>
     if (op.multipart) assert.match(call.contentType, /multipart\/form-data/);
     assert.equal(JSON.stringify(result).includes("vault-key-secret"), false, `${op.fn} must not leak vault token`);
   }
-  assert.equal(OPERATIONS.length, 89);
+  assert.equal(OPERATIONS.length, 86);
 });
 
 test("Bearer header is sent and the vault token is not returned", async () => {
@@ -1196,58 +1162,6 @@ test("Bearer header is sent and the vault token is not returned", async () => {
   assert.equal(lastCall(calls).bearerToken, "vault-key-secret");
   assert.equal(JSON.stringify(user).includes("vault-key-secret"), false);
   assert.equal(JSON.stringify(user).includes("Bearer"), false);
-});
-
-test("inbox placement create and get use documented paths and unique-phrase fields", async () => {
-  const { api, calls } = loadScript({
-    handler: ({ url, method }) => {
-      if (method === "POST" && url.endsWith("/api/v1/inbox-placement-tests")) {
-        return {
-          status: 200,
-          body: {
-            data: {
-              uuid: "test-1",
-              name: "sample",
-              status: "created",
-              filter_phrase: "egipt_uniquePhrase",
-              comma_separated_test_email_addresses: "jake@emailguardalpha.com,cody@emailguardalpha.com",
-              inbox_placement_test_emails: [
-                { email: "jake@emailguardalpha.com", status: "waiting_for_email" },
-              ],
-            },
-          },
-        };
-      }
-      if (method === "GET" && url.endsWith("/api/v1/inbox-placement-tests/test-1")) {
-        return {
-          status: 200,
-          body: {
-            data: {
-              uuid: "test-1",
-              status: "created",
-              filter_phrase: "egipt_uniquePhrase",
-              comma_separated_test_email_addresses: "jake@emailguardalpha.com,cody@emailguardalpha.com",
-            },
-          },
-        };
-      }
-      return { status: 200, body: { data: [] } };
-    },
-  });
-  const created = await api.createInboxPlacementTest({ name: "sample" });
-  assert.equal(created.data.filter_phrase, "egipt_uniquePhrase");
-  assert.equal(created.data.comma_separated_test_email_addresses, "jake@emailguardalpha.com,cody@emailguardalpha.com");
-  assert.equal(lastCall(calls).method, "POST");
-  assert.equal(pathOf(lastCall(calls).url), "/api/v1/inbox-placement-tests");
-  assert.deepEqual(lastCall(calls).payload, { name: "sample" });
-  const listed = await api.listInboxPlacementTests();
-  sameJson(listed, { data: [] });
-  assert.equal(lastCall(calls).method, "GET");
-  assert.equal(pathOf(lastCall(calls).url), "/api/v1/inbox-placement-tests");
-  const shown = await api.showInboxPlacementTest({ id: "test-1" });
-  assert.equal(shown.data.filter_phrase, "egipt_uniquePhrase");
-  assert.equal(lastCall(calls).method, "GET");
-  assert.equal(pathOf(lastCall(calls).url), "/api/v1/inbox-placement-tests/test-1");
 });
 
 test("HTTP failures throw EMAILGUARD_REQUEST_FAILED", async () => {
@@ -1261,7 +1175,7 @@ test("HTTP failures throw EMAILGUARD_REQUEST_FAILED", async () => {
     assert.equal(error.message, "EMAILGUARD_REQUEST_FAILED: 401 Unauthenticated.");
     return true;
   });
-  await assert.rejects(() => api.listInboxPlacementTests(), (error) => {
+  await assert.rejects(() => api.listDomainBlacklists(), (error) => {
     assert.equal(error.message, "EMAILGUARD_REQUEST_FAILED: 429 Too many requests");
     return true;
   });
@@ -1293,13 +1207,13 @@ test("the EmailGuard response body is returned unchanged", async () => {
   const { api, calls } = loadScript({
     handler: () => ({
       status: 200,
-      body: { ok: false, outcome: "nope", data: { filter_phrase: "egipt_x" } },
+      body: { ok: false, outcome: "nope", data: { domain: "example.com" } },
     }),
   });
-  const created = await api.createInboxPlacementTest({ name: "sample" });
-  assert.equal(created.ok, false);
-  assert.equal(created.outcome, "nope");
-  assert.equal(created.data.filter_phrase, "egipt_x");
+  const listed = await api.listDomainBlacklists();
+  assert.equal(listed.ok, false);
+  assert.equal(listed.outcome, "nope");
+  assert.equal(listed.data.domain, "example.com");
   assert.equal(calls.length, 1);
 });
 
