@@ -17,12 +17,20 @@ const loadScript = (handler) => {
           method: String(options.method || "GET").toUpperCase(),
           payload: options.payload,
           contentType: options.headers && options.headers["Content-Type"],
+          muteHttpExceptions: options.muteHttpExceptions === true,
         });
         const result = await handler({ url, method: String(options.method || "GET").toUpperCase(), calls });
+        const status = Number(result.status) || 200;
         const body = result.body === undefined ? {} : result.body;
+        const text = typeof body === "string" ? body : JSON.stringify(body);
+        if (status >= 400 && options.muteHttpExceptions !== true) {
+          const truncated = text.slice(0, 200);
+          const suffix = text.length > truncated.length ? "..." : "";
+          throw new Error(`Request failed with status ${status}. Truncated server response: ${truncated}${suffix} (use muteHttpExceptions option to examine full response)`);
+        }
         return {
-          getResponseCode: () => Number(result.status) || 200,
-          getContentText: () => (typeof body === "string" ? body : JSON.stringify(body)),
+          getResponseCode: () => status,
+          getContentText: () => text,
         };
       },
     },
@@ -158,6 +166,7 @@ test("record operations encode method, path, query, and body", async () => {
   assert.equal(synced.payload, csv);
   const failed = loadScript(() => ({ status: 422, body: { error: { type: "INVALID_REQUEST_UNKNOWN", message: "Invalid request: parameter validation failed" } } }));
   await assert.rejects(() => failed.api.getRecord({ baseId: "appOther", tableIdOrName: "T", recordId: "rec1" }), (error) => {
+    assert.equal(failed.calls[0].muteHttpExceptions, true);
     assert.equal(error.message, "AIRTABLE_REQUEST_FAILED: 422 Invalid request: parameter validation failed");
     assert.equal(error.message.includes("Bearer"), false);
     return true;

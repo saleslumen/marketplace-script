@@ -41,6 +41,7 @@ const airtableRequest = async (path, method = "GET", body, request = {}) => {
       "Content-Type": (request && request.contentType) || "application/json",
       Accept: "application/json",
     },
+    muteHttpExceptions: true,
   };
   if (body !== undefined) options.payload = request && request.raw ? String(body) : JSON.stringify(body);
   const origin = (request && request.origin) || AIRTABLE_API_BASE;

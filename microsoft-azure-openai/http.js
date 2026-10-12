@@ -36,6 +36,7 @@ const requestJson = async (path, method, body) => {
       Authorization: "Bearer " + token,
       Accept: "application/json",
     },
+    muteHttpExceptions: true,
   };
   if (body !== undefined) {
     options.headers["Content-Type"] = "application/json";

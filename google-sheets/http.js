@@ -141,7 +141,7 @@ const errorDetail = (text) => {
 };
 const requestJson = async (path, method, body) => {
   const token = await ConnectionApp.getAccessToken(CONNECTION_KEY);
-  const options = { method, headers: { Authorization: "Bearer " + token, Accept: "application/json" } };
+  const options = { method, headers: { Authorization: "Bearer " + token, Accept: "application/json" }, muteHttpExceptions: true };
   if (body !== undefined) {
     options.headers["Content-Type"] = "application/json";
     options.payload = JSON.stringify(body);

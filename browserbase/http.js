@@ -185,7 +185,7 @@ const multipartFile = (file) => {
 const browserbaseRequest = async (path, method, body, request) => {
   const apiKey = await ConnectionApp.getApiKey(CONNECTION_KEY);
   const headers = { "X-BB-API-Key": apiKey, Accept: request && request.accept ? request.accept : "application/json" };
-  const options = { method, headers };
+  const options = { method, headers, muteHttpExceptions: true };
   if (request && request.multipart) {
     const packed = multipartFile(request.file);
     headers["Content-Type"] = `multipart/form-data; boundary=${packed.boundary}`;

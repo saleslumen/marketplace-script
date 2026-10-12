@@ -20,12 +20,20 @@ const loadScript = (handler) => {
           contentType: options.headers && options.headers["Content-Type"],
           accept: options.headers && options.headers.Accept,
           apiKey: options.headers && options.headers["X-BB-API-Key"],
+          muteHttpExceptions: options.muteHttpExceptions === true,
         });
         const result = await handler({ url, method: String(options.method || "GET").toUpperCase(), headers: options.headers || {}, calls });
+        const status = Number(result.status) || 200;
         const body = result.body === undefined ? {} : result.body;
+        const text = typeof body === "string" ? body : JSON.stringify(body);
+        if (status >= 400 && options.muteHttpExceptions !== true) {
+          const truncated = text.slice(0, 200);
+          const suffix = text.length > truncated.length ? "..." : "";
+          throw new Error(`Request failed with status ${status}. Truncated server response: ${truncated}${suffix} (use muteHttpExceptions option to examine full response)`);
+        }
         return {
-          getResponseCode: () => Number(result.status) || 200,
-          getContentText: () => (typeof body === "string" ? body : JSON.stringify(body)),
+          getResponseCode: () => status,
+          getContentText: () => text,
         };
       },
     },
@@ -159,6 +167,7 @@ test("session operations send the documented request and return the Browserbase 
   assert.match(script.calls.at(-1).payload, /hello/);
   const failed = loadScript(() => ({ status: 404, body: { message: "not found" } }));
   await assert.rejects(() => failed.api.getSession({ id: "missing" }), (error) => {
+    assert.equal(failed.calls[0].muteHttpExceptions, true);
     assert.equal(error.message, 'BROWSERBASE_REQUEST_FAILED (404): {"message":"not found"}');
     assert.equal(error.message.includes("bb-test-key"), false);
     return true;

@@ -33,11 +33,19 @@ const loadScript = (handler) => {
         call.contentType = options.headers && options.headers["Content-Type"];
         call.authorization = options.headers && options.headers.Authorization;
         call.accept = options.headers && options.headers.Accept;
+        call.muteHttpExceptions = options.muteHttpExceptions === true;
         const result = await handler({ url, method: call.method });
+        const status = Number(result.status) || 200;
         const body = result.body === undefined ? {} : result.body;
+        const text = typeof body === "string" ? body : JSON.stringify(body);
+        if (status >= 400 && options.muteHttpExceptions !== true) {
+          const truncated = text.slice(0, 200);
+          const suffix = text.length > truncated.length ? "..." : "";
+          throw new Error(`Request failed with status ${status}. Truncated server response: ${truncated}${suffix} (use muteHttpExceptions option to examine full response)`);
+        }
         return {
-          getResponseCode: () => Number(result.status) || 200,
-          getContentText: () => (typeof body === "string" ? body : JSON.stringify(body)),
+          getResponseCode: () => status,
+          getContentText: () => text,
         };
       },
     },
@@ -287,11 +295,13 @@ test("invalid Sheets input is rejected before the request", async () => {
 test("Sheets failures keep the status and message", async () => {
   const missing = loadScript(() => ({ status: 404, body: { error: { code: 404, message: "Requested entity was not found." } } }));
   await assert.rejects(() => missing.api.spreadsheetsGet({ spreadsheetId: "abc" }), /SHEETS_REQUEST_FAILED \(404\): Requested entity was not found\./);
+  assert.equal(missing.calls[0].muteHttpExceptions, true);
   const bare = loadScript(() => ({ status: 500, body: {} }));
   await assert.rejects(() => bare.api.spreadsheetsValuesGet({ spreadsheetId: "abc", range: "A1" }), (error) => {
     assert.equal(error.message, "SHEETS_REQUEST_FAILED (500)");
     assert.equal(error.message.includes("Bearer"), false);
     assert.equal(error.message.includes("token"), false);
+    assert.equal(bare.calls[0].muteHttpExceptions, true);
     return true;
   });
   const text = loadScript(() => ({ status: 200, body: "not-json" }));
