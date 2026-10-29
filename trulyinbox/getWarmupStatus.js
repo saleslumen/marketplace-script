@@ -1,13 +1,15 @@
 /**
- * @description Get today's warmup activity for one email account.
+ * @description Get warmup status for one email account.
  * @param {Object} input
- * @param {number} input.emailAccountId
+ * @param {number} input.workspaceId
+ * @param {number} input.id
  * @returns {Object}
  * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
  * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
 async function getWarmupStatus(input) {
   const req = requireObjectInput(input);
-  const emailAccountId = readRequired(req, "emailAccountId", "emailAccountId", "number");
-  return trulyinboxRequest("GET", `/warmup-status/${encodeURIComponent(emailAccountId)}`);
+  const workspaceId = readRequired(req, "workspaceId", "workspaceId", "number");
+  const id = readRequired(req, "id", "id", "number");
+  return trulyinboxRequest("GET", workspacePath(workspaceId, `/accounts/${encodeURIComponent(id)}/warmup`));
 }

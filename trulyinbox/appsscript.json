@@ -10,7 +10,7 @@
     "permissions": {
       "saleslumenScopes": [],
       "storage": [],
-      "externalDomains": ["https://lupus-edge.trulyinbox.com"]
+      "externalDomains": ["https://lynx-api.trulyinbox.com"]
     },
     "connections": [
       {
@@ -19,7 +19,7 @@
         "authorizationMode": "USER",
         "required": true,
         "displayLabel": "TrulyInbox",
-        "helpText": "Paste the TrulyInbox API key from Settings, API. The app sends it as the X-Api-Key header."
+        "helpText": "Paste a TrulyInbox API key from Settings, API keys. The app sends it as Authorization: Bearer."
       }
     ]
   }

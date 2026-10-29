@@ -1,13 +1,15 @@
 /**
  * @description Get warmup settings for one email account.
  * @param {Object} input
- * @param {number} input.emailAccountId
+ * @param {number} input.workspaceId
+ * @param {number} input.id
  * @returns {Object}
  * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
  * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
 async function getWarmupSettings(input) {
   const req = requireObjectInput(input);
-  const emailAccountId = readRequired(req, "emailAccountId", "emailAccountId", "number");
-  return trulyinboxRequest("GET", `/warmup-settings/${encodeURIComponent(emailAccountId)}`);
+  const workspaceId = readRequired(req, "workspaceId", "workspaceId", "number");
+  const id = readRequired(req, "id", "id", "number");
+  return trulyinboxRequest("GET", workspacePath(workspaceId, `/accounts/${encodeURIComponent(id)}/warmup/settings`));
 }

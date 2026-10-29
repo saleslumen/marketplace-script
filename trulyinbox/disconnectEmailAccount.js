@@ -1,13 +1,15 @@
 /**
- * @description Temporarily disconnect an email account without deleting it.
+ * @description Disconnect an email account.
  * @param {Object} input
- * @param {number} input.emailAccountId
+ * @param {number} input.workspaceId
+ * @param {number} input.id
  * @returns {Object}
  * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
  * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
  */
 async function disconnectEmailAccount(input) {
   const req = requireObjectInput(input);
-  const emailAccountId = readRequired(req, "emailAccountId", "emailAccountId", "number");
-  return trulyinboxRequest("POST", `/email-accounts/${encodeURIComponent(emailAccountId)}/disconnect`);
+  const workspaceId = readRequired(req, "workspaceId", "workspaceId", "number");
+  const id = readRequired(req, "id", "id", "number");
+  return trulyinboxRequest("POST", workspacePath(workspaceId, `/accounts/${encodeURIComponent(id)}/disconnect`));
 }

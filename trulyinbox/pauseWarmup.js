@@ -1,0 +1,15 @@
+/**
+ * @description Pause warmup for one email account.
+ * @param {Object} input
+ * @param {number} input.workspaceId
+ * @param {number} input.id
+ * @returns {Object}
+ * @throws {Error} TRULYINBOX_INVALID_INPUT: <reason>
+ * @throws {Error} TRULYINBOX_REQUEST_FAILED: <status> <message>
+ */
+async function pauseWarmup(input) {
+  const req = requireObjectInput(input);
+  const workspaceId = readRequired(req, "workspaceId", "workspaceId", "number");
+  const id = readRequired(req, "id", "id", "number");
+  return trulyinboxRequest("POST", workspacePath(workspaceId, `/accounts/${encodeURIComponent(id)}/warmup/pause`));
+}
